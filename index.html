@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>购房能力测算</title>
+<style>
+:root {
+  --bg:#F7F5F0;--surf:#FFF;--surf2:#F0EDE6;
+  --bd:rgba(0,0,0,0.08);--bd2:rgba(0,0,0,0.15);
+  --tx:#1A1814;--tx2:#6B6760;--tx3:#9E9B96;
+  --blue:#1D5FA8;--bluebg:#EAF1FB;--bluetx:#0C3D72;
+  --amb:#B05E0A;--ambbg:#FEF3E6;--ambtx:#7A3F05;
+  --grn:#2A6B35;--grnbg:#E8F5EB;--grntx:#1A4522;
+  --red:#A3201E;--redbg:#FDECEA;
+  --warn:#7A4A05;--warnbg:#FEF7E6;
+  --r:12px;--rs:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,Helvetica,sans-serif;background:var(--bg);color:var(--tx);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.hdr{background:var(--tx);padding:16px 20px 18px;padding-top:calc(env(safe-area-inset-top,0px) + 16px)}
+.hdr-sub{font-size:10px;color:rgba(255,255,255,.45);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.hdr-title{font-size:22px;font-weight:600;color:#fff;letter-spacing:-.3px}
+.tabs{display:flex;background:var(--surf);border-bottom:1px solid var(--bd2);position:sticky;top:0;z-index:100;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;padding:13px 15px;font-size:13px;font-weight:500;color:var(--tx3);border:none;background:none;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;font-family:-apple-system,Helvetica,sans-serif}
+.tab.on{color:var(--tx);border-bottom-color:var(--tx)}
+.panel{display:none;padding:14px 14px 100px}
+.panel.on{display:block}
+.card{background:var(--surf);border-radius:var(--r);border:1px solid var(--bd);padding:15px;margin-bottom:12px}
+.sec-lbl{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bd)}
+.card-title{font-size:16px;font-weight:600;margin-bottom:12px}
+.ir{margin-bottom:13px}
+.ir:last-of-type{margin-bottom:0}
+.ilbl{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--tx2);margin-bottom:7px}
+.ilbl b{font-weight:600;color:var(--tx);font-size:14px}
+input[type=range]{width:100%;height:4px;-webkit-appearance:none;appearance:none;background:var(--surf2);border-radius:2px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--tx);cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.feebox{background:var(--surf2);border-radius:var(--rs);padding:10px 12px;margin-top:8px}
+.feerow{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px solid var(--bd)}
+.feerow:last-child{border-bottom:none;font-weight:600}
+.feelbll{color:var(--tx2)}
+.goto-btn{width:100%;padding:15px;background:var(--tx);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:600;font-family:-apple-system,Helvetica,sans-serif;cursor:pointer;margin-top:6px;-webkit-appearance:none}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fcell{background:var(--surf2);border-radius:var(--rs);padding:12px}
+.flbl{font-size:11px;color:var(--tx2);margin-bottom:3px}
+.fval{font-size:20px;font-weight:600}
+.fsub{font-size:10px;color:var(--tx3);margin-top:2px}
+.sc{border-radius:var(--r);border:1px solid var(--bd);overflow:hidden;margin-bottom:12px}
+.sc.rec{border:2px solid var(--blue)}
+.sc:last-child{margin-bottom:0}
+.schdr{padding:11px 14px;background:var(--surf2);display:flex;align-items:center;justify-content:space-between}
+.scname{font-weight:600;font-size:13px}
+.rbadge{font-size:10px;background:var(--blue);color:#fff;padding:2px 8px;border-radius:20px;font-weight:600}
+.scbody{padding:14px}
+.tline{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd);margin-bottom:12px}
+.tlbl{font-size:12px;color:var(--tx2)}
+.tval{font-size:16px;font-weight:600}
+.psplit{display:grid;grid-template-columns:1fr 1px 1fr;border-radius:var(--rs);overflow:hidden;border:1px solid var(--bd);margin-bottom:10px}
+.pdivv{background:var(--bd2)}
+.ph{padding:12px 13px}
+.ph.g{background:var(--bluebg)}
+.ph.c{background:var(--ambbg)}
+.plbl{font-size:10px;font-weight:600;margin-bottom:5px;letter-spacing:.3px}
+.ph.g .plbl{color:var(--bluetx)}
+.ph.c .plbl{color:var(--ambtx)}
+.pamt{font-size:17px;font-weight:600;line-height:1}
+.ph.g .pamt{color:var(--blue)}
+.ph.c .pamt{color:var(--amb)}
+.psub{font-size:10px;margin-top:4px}
+.ph.g .psub{color:var(--blue)}
+.ph.c .psub{color:var(--amb)}
+.pdiv2{display:flex;align-items:center;gap:7px;margin:13px 0 10px;font-size:10px;color:var(--tx3)}
+.pdiv2::before,.pdiv2::after{content:'';flex:1;height:1px;background:var(--bd)}
+.ptag{white-space:nowrap;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px}
+.ptag.bb{background:var(--surf2);color:var(--tx2)}
+.ptag.aa{background:var(--grnbg);color:var(--grntx)}
+.tip{font-size:12px;padding:8px 10px;border-radius:var(--rs);margin-top:8px}
+.tip.ok{background:var(--grnbg);color:var(--grntx)}
+.tip.wn{background:var(--warnbg);color:var(--warn)}
+.tip.bd{background:var(--redbg);color:var(--red)}
+.nt{font-size:10px;color:var(--tx3);margin-top:5px}
+.dtbl{width:100%;border-collapse:collapse;font-size:13px}
+.dtbl th{text-align:left;padding:7px 0;font-weight:600;font-size:11px;color:var(--tx2);border-bottom:1px solid var(--bd)}
+.dtbl th:not(:first-child){text-align:right}
+.dtbl td{padding:7px 0;border-bottom:1px solid var(--bd)}
+.dtbl tr:last-child td{border-bottom:none;font-weight:600}
+.dtbl td:not(:first-child){text-align:right}
+.cb{color:var(--blue)}.cg{color:var(--grn)}.ca{color:var(--amb)}
+.drow{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.dlbl{font-size:12px;color:var(--tx2)}
+.dval{font-size:20px;font-weight:600}
+.dbar{height:7px;background:var(--surf2);border-radius:4px;overflow:hidden;margin-bottom:12px}
+.dfill{height:7px;border-radius:4px;transition:width .3s}
+.dscale{display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-top:3px;margin-bottom:14px}
+.irow{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px}
+.ilb2{min-width:56px;color:var(--tx2)}
+.ibg{flex:1;height:10px;background:var(--surf2);border-radius:5px;overflow:hidden}
+.ifg{height:10px;border-radius:5px;transition:width .3s}
+.ivl{min-width:52px;text-align:right;font-weight:600;font-size:12px}
+.sbox{background:var(--grnbg);border-radius:var(--r);padding:13px 15px;display:flex;justify-content:space-between;align-items:center;margin-top:13px}
+.slbl{font-size:12px;color:var(--grntx);margin-bottom:3px}
+.sval{font-size:24px;font-weight:600;color:var(--grn)}
+.snt{font-size:11px;color:var(--grntx);margin-top:2px}
+.spct{font-size:22px;font-weight:600;color:var(--grn)}
+.stabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.stab{font-size:12px;padding:7px 12px;border-radius:20px;border:1px solid var(--bd2);background:var(--surf);color:var(--tx2);cursor:pointer;font-family:-apple-system,Helvetica,sans-serif;-webkit-appearance:none}
+.stab.on{background:var(--tx);color:#fff;border-color:var(--tx)}
+.stbl{width:100%;border-collapse:collapse;font-size:12px}
+.stbl th{text-align:left;padding:8px 5px;font-size:11px;font-weight:600;color:var(--tx2);background:var(--surf2);border-bottom:1px solid var(--bd)}
+.stbl td{padding:8px 5px;border-bottom:1px solid var(--bd)}
+.stbl tr:last-child td{border-bottom:none}
+.bdg{display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600}
+.bok{background:var(--grnbg);color:var(--grntx)}
+.bwn{background:var(--warnbg);color:var(--warn)}
+.bbd{background:var(--redbg);color:var(--red)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-sub">家庭财务工具</div>
+  <div class="hdr-title">购房能力测算</div>
+</div>
+
+<div class="tabs">
+  <button class="tab on"  onclick="showTab('p1',this)">参数设置</button>
+  <button class="tab"     onclick="showTab('p2',this)">资金方案</button>
+  <button class="tab"     onclick="showTab('p3',this)">贷款月供</button>
+  <button class="tab"     onclick="showTab('p4',this)">收入压力</button>
+  <button class="tab"     onclick="showTab('p5',this)">利息对比</button>
+  <button class="tab"     onclick="showTab('p6',this)">压力测试</button>
+</div>
+
+<!-- 参数设置 -->
+<div id="p1" class="panel on">
+  <div class="card">
+    <div class="sec-lbl">家庭收入</div>
+    <div class="ir">
+      <div class="ilbl">月收入（税后）<b id="v-income">0.0 万</b></div>
+      <input type="range" id="income" min="0" max="50" step="0.5" value="0" oninput="calc()">
+    </div>
+  </div>
+  <div class="card">
+    <div class="sec-lbl">可用资金</div>
+    <div class="ir">
+      <div class="ilbl">存款现金<b id="v-savings">0 万</b></div>
+      <input type="range" id="savings" min="0" max="600" step="5" value="0" oninput="calc()">
+    </div>
+    <div class="ir">
+      <div class="ilbl">父母可支持<b id="v-parents">0 万</b></div>
+      <input type="range" id="parents" min="0" max="300" step="10" value="0" oninput="calc()">
+    </div>
+    <div class="ir">
+      <div class="ilbl">待售房产市值<b id="v-hsell">0 万</b></div>
+      <input type="range" id="hsell" min="0" max="1000" step="10" value="0" oninput="calc()">
+    </div>
+    <div class="ir">
+      <div class="ilbl">待售房产余贷<b id="v-hdebt">0 万</b></div>
+      <input type="range" id="hdebt" min="0" max="500" step="10" value="0" oninput="calc()">
+    </div>
+    <div class="ir">
+      <div class="ilbl">其他月负债<b id="v-odebt">0.0 万</b></div>
+      <input type="range" id="odebt" min="0" max="5" step="0.1" value="0" oninput="calc()">
+    </div>
+  </div>
+  <div class="card">
+    <div class="sec-lbl">购房条件</div>
+    <div class="ir">
+      <div class="ilbl">目标总价<b id="v-hp">0 万</b></div>
+      <input type="range" id="hp" min="0" max="2000" step="10" value="0" oninput="calc()">
+    </div>
+    <div class="ir">
+      <div class="ilbl">首付比例<b id="v-dpct">30%</b></div>
+      <input type="range" id="dpct" min="30" max="70" step="5" value="30" oninput="calc()">
+    </div>
+    <div class="ir">
+      <div class="ilbl">中介费比例<b id="v-agentPct">1.5%</b></div>
+      <input type="range" id="agentPct" min="0" max="3" step="0.1" value="1.5" oninput="calc()">
+    </div>
+    <div class="ir">
+      <div class="ilbl">契税比例<b id="v-deedPct">1.0%</b></div>
+      <input type="range" id="deedPct" min="0" max="5" step="0.5" value="1" oninput="calc()">
+    </div>
+    <div class="ir">
+      <div class="ilbl">家具家电预算<b id="v-furn">0 万</b></div>
+      <input type="range" id="furn" min="0" max="50" step="1" value="0" oninput="calc()">
+    </div>
+    <div class="feebox">
+      <div class="feerow"><span class="feelbll">中介费</span><span id="v-agent">0.0 万</span></div>
+      <div class="feerow"><span class="feelbll">契税</span><span id="v-deed">0.0 万</span></div>
+      <div class="feerow"><span class="feelbll">家具家电</span><span id="v-furnv">0.0 万</span></div>
+      <div class="feerow"><span>附加费合计</span><span id="v-extras" style="color:var(--amb)">0.0 万</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sec-lbl">贷款参数</div>
+    <div class="ir">
+      <div class="ilbl">公积金可贷上限<b id="v-gjjQ">200 万</b></div>
+      <input type="range" id="gjjQ" min="0" max="200" step="10" value="200" oninput="calc()">
+    </div>
+    <div class="ir">
+      <div class="ilbl">公积金月缴（双方）<b id="v-gjjM">0.60 万</b></div>
+      <input type="range" id="gjjM" min="0.05" max="2" step="0.05" value="0.6" oninput="calc()">
+    </div>
+    <div class="ir">
+      <div class="ilbl">公积金利率<b id="v-gjjR">2.60%</b></div>
+      <input type="range" id="gjjR" min="1.5" max="4.0" step="0.05" value="2.6" oninput="calc()">
+    </div>
+    <div class="ir">
+      <div class="ilbl">商业贷款利率<b id="v-comR">3.05%</b></div>
+      <input type="range" id="comR" min="2.0" max="7.0" step="0.05" value="3.05" oninput="calc()">
+    </div>
+    <div class="ir">
+      <div class="ilbl">贷款年限<b id="v-yrs">25 年</b></div>
+      <input type="range" id="yrs" min="10" max="30" step="5" value="25" oninput="calc()">
+    </div>
+  </div>
+  <button class="goto-btn" onclick="showTab('p2',document.querySelectorAll('.tab')[1])">查看测算结果 →</button>
+</div>
+
+<!-- 资金方案 -->
+<div id="p2" class="panel">
+  <div class="card">
+    <div class="card-title">可用资金池</div>
+    <div class="g2" id="r-funds"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">方案对比</div>
+    <div id="r-schemes"></div>
+  </div>
+</div>
+
+<!-- 贷款月供 -->
+<div id="p3" class="panel">
+  <div class="card">
+    <div class="card-title">贷款拆分</div>
+    <div id="r-split"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">月供明细对比</div>
+    <div class="tw" id="r-monthly"></div>
+  </div>
+</div>
+
+<!-- 收入压力 -->
+<div id="p4" class="panel">
+  <div class="card">
+    <div class="card-title">全额 DTI</div>
+    <div id="r-dtibars"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">收入月度分配</div>
+    <div class="tw" id="r-dtitbl"></div>
+  </div>
+</div>
+
+<!-- 利息对比 -->
+<div id="p5" class="panel">
+  <div class="card">
+    <div class="card-title">总利息费用对比</div>
+    <div id="r-interest"></div>
+  </div>
+</div>
+
+<!-- 压力测试 -->
+<div id="p6" class="panel">
+  <div class="card">
+    <div class="card-title">压力测试</div>
+    <div class="stabs">
+      <button class="stab on" onclick="setSt('a1',this)">方案A · 买房时</button>
+      <button class="stab"    onclick="setSt('a2',this)">方案A · 卖房后</button>
+      <button class="stab"    onclick="setSt('b',this)">方案 B</button>
+    </div>
+    <div class="tw">
+      <table class="stbl">
+        <thead><tr>
+          <th>场景</th>
+          <th style="color:var(--blue)">公积金冲抵</th>
+          <th style="color:var(--amb)">现金实付</th>
+          <th>DTI</th><th>评级</th>
+        </tr></thead>
+        <tbody id="r-stress"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+var SM = 'a1';
+var S = {};
+
+function showTab(id, btn) {
+  var all = document.querySelectorAll('.panel');
+  for (var i = 0; i < all.length; i++) all[i].className = 'panel';
+  var tabs = document.querySelectorAll('.tab');
+  for (var i = 0; i < tabs.length; i++) tabs[i].className = 'tab';
+  document.getElementById(id).className = 'panel on';
+  btn.className = 'tab on';
+}
+
+function setSt(m, el) {
+  SM = m;
+  var tabs = document.querySelectorAll('.stab');
+  for (var i = 0; i < tabs.length; i++) tabs[i].className = 'stab';
+  el.className = 'stab on';
+  renderStress();
+}
+
+function gv(id) { return parseFloat(document.getElementById(id).value); }
+function st(id, v) { document.getElementById(id).textContent = v; }
+
+function mpmt(p, r, y) {
+  if (p <= 0) return 0;
+  var rm = r / 12, n = y * 12, f = Math.pow(1 + rm, n);
+  return p * rm * f / (f - 1);
+}
+function mpmtM(p, r, m) {
+  if (p <= 0 || m <= 0) return 0;
+  var rm = r / 12, f = Math.pow(1 + rm, m);
+  return p * rm * f / (f - 1);
+}
+function remBal(p, r, tot, paid) {
+  if (p <= 0) return 0;
+  var rm = r / 12, f = Math.pow(1 + rm, tot), fm = Math.pow(1 + rm, paid);
+  return p * (f - fm) / (f - 1);
+}
+function yuan(n) { return Math.round(n * 10000).toLocaleString() + '元'; }
+function f0(n) { return '' + Math.round(n); }
+function f1(n) { return n.toFixed(1); }
+function f2(n) { return n.toFixed(2); }
+function pct(n) { return (n * 100).toFixed(1) + '%'; }
+function dc(d) { return d < 0.4 ? 'var(--grn)' : d < 0.55 ? 'var(--amb)' : 'var(--red)'; }
+function bdg(d) {
+  if (d < 0.4) return '<span class="bdg bok">可控</span>';
+  if (d < 0.55) return '<span class="bdg bwn">偏紧</span>';
+  return '<span class="bdg bbd">高压</span>';
+}
+function splitP(tot, m) {
+  var off = Math.min(m, tot);
+  return { off: off, cash: (tot - off < 0 ? 0 : tot - off) };
+}
+
+function payBlock(tot, sv, income) {
+  return '<div class="tline"><span class="tlbl">月供合计</span><span class="tval">' + yuan(tot) + '</span></div>'
+    + '<div class="psplit">'
+    + '<div class="ph g"><div class="plbl">公积金账户冲抵</div><div class="pamt">' + yuan(sv.off) + '</div><div class="psub">月缴直接扣抵·无需现金</div></div>'
+    + '<div class="pdivv"></div>'
+    + '<div class="ph c"><div class="plbl">现金实际支出</div><div class="pamt">' + yuan(sv.cash) + '</div><div class="psub">占月收入 ' + pct(sv.cash / income) + '</div></div>'
+    + '</div>';
+}
+
+function calc() {
+  var income   = gv('income');
+  var savings  = gv('savings');
+  var parents  = gv('parents');
+  var hsell    = gv('hsell');
+  var hdebt    = gv('hdebt');
+  var odebt    = gv('odebt');
+  var hp       = gv('hp');
+  var dpct     = gv('dpct') / 100;
+  var gjjQ     = gv('gjjQ');
+  var gjjM     = gv('gjjM');
+  var gjjR     = gv('gjjR') / 100;
+  var comR     = gv('comR') / 100;
+  var yrs      = gv('yrs');
+  var agentPct = gv('agentPct') / 100;
+  var deedPct  = gv('deedPct') / 100;
+  var furn     = gv('furn');
+
+  st('v-income',   f1(income) + ' 万');
+  st('v-savings',  f0(savings) + ' 万');
+  st('v-parents',  f0(parents) + ' 万');
+  st('v-hsell',    f0(hsell) + ' 万');
+  st('v-hdebt',    f0(hdebt) + ' 万');
+  st('v-odebt',    f1(odebt) + ' 万');
+  st('v-hp',       f0(hp) + ' 万');
+  st('v-dpct',     Math.round(dpct * 100) + '%');
+  st('v-agentPct', (agentPct * 100).toFixed(1) + '%');
+  st('v-deedPct',  (deedPct * 100).toFixed(1) + '%');
+  st('v-furn',     f0(furn) + ' 万');
+  st('v-gjjQ',     f0(gjjQ) + ' 万');
+  st('v-gjjM',     f2(gjjM) + ' 万');
+  st('v-gjjR',     (gjjR * 100).toFixed(2) + '%');
+  st('v-comR',     (comR * 100).toFixed(2) + '%');
+  st('v-yrs',      yrs + ' 年');
+
+  var agent  = hp * agentPct;
+  var deed   = hp * deedPct;
+  var extras = agent + deed + furn;
+  st('v-agent',  f1(agent) + ' 万');
+  st('v-deed',   f1(deed) + ' 万');
+  st('v-furnv',  f1(furn) + ' 万');
+  st('v-extras', f1(extras) + ' 万');
+
+  var down      = hp * dpct;
+  var cashNeed  = down + extras;
+  var hsellNet  = hsell - hdebt; if (hsellNet < 0) hsellNet = 0;
+  var cashImm   = savings + parents;
+  var cashFull  = cashImm + hsellNet;
+  var gapA      = cashNeed - cashImm;
+  var gapB      = cashNeed - cashFull;
+
+  var needLoanA = hp - down;
+  var gjjLA     = gjjQ < needLoanA ? gjjQ : needLoanA;
+  var comLA     = needLoanA - gjjLA;
+  var gjjPA     = mpmt(gjjLA, gjjR, yrs);
+  var comPA     = mpmt(comLA, comR, yrs);
+  var totA      = gjjPA + comPA;
+  var spA       = splitP(totA, gjjM);
+
+  var comLA2    = comLA - hsellNet; if (comLA2 < 0) comLA2 = 0;
+  var totA2     = mpmt(gjjLA, gjjR, yrs) + mpmt(comLA2, comR, yrs);
+  var spA2      = splitP(totA2, gjjM);
+
+  var extraB    = -gapB; if (extraB < 0) extraB = 0;
+  var needLoanB = needLoanA - extraB; if (needLoanB < 0) needLoanB = 0;
+  var gjjLB     = gjjQ < needLoanB ? gjjQ : needLoanB;
+  var comLB     = needLoanB - gjjLB;
+  var gjjPB     = mpmt(gjjLB, gjjR, yrs);
+  var comPB     = mpmt(comLB, comR, yrs);
+  var totB      = gjjPB + comPB;
+  var spB       = splitP(totB, gjjM);
+
+  S = { income:income, savings:savings, parents:parents, hsell:hsell, hdebt:hdebt, odebt:odebt,
+        hp:hp, dpct:dpct, gjjQ:gjjQ, gjjM:gjjM, gjjR:gjjR, comR:comR, yrs:yrs,
+        agent:agent, deed:deed, extras:extras, down:down, cashNeed:cashNeed,
+        hsellNet:hsellNet, cashImm:cashImm, cashFull:cashFull, gapA:gapA, gapB:gapB,
+        needLoanA:needLoanA, gjjLA:gjjLA, comLA:comLA, gjjPA:gjjPA, comPA:comPA, totA:totA, spA:spA,
+        comLA2:comLA2, totA2:totA2, spA2:spA2,
+        needLoanB:needLoanB, gjjLB:gjjLB, comLB:comLB, gjjPB:gjjPB, comPB:comPB, totB:totB, spB:spB };
+
+  renderFunds();
+  renderSchemes();
+  renderLoan();
+  renderDTI();
+  renderInterest();
+  renderStress();
+}
+
+function renderFunds() {
+  var items = [
+    { l:'存款现金',    v:S.savings,   s:'立即可用',   c:'var(--blue)' },
+    { l:'父母支持',    v:S.parents,   s:'立即可用',   c:'var(--grn)' },
+    { l:'待售房产净得',v:S.hsellNet,  s:'市值' + f0(S.hsell) + (S.hdebt > 0 ? ' − 余贷' + f0(S.hdebt) : '') + ' 万', c:'var(--amb)' },
+    { l:'合计可用',    v:S.cashFull,  s:'全部资产',   c:'#534AB7' },
+  ];
+  var h = '';
+  for (var i = 0; i < items.length; i++) {
+    var d = items[i];
+    h += '<div class="fcell"><div class="flbl">' + d.l + '</div>'
+       + '<div class="fval" style="color:' + d.c + '">' + f0(d.v) + ' 万</div>'
+       + '<div class="fsub">' + d.s + '</div></div>';
+  }
+  document.getElementById('r-funds').innerHTML = h;
+}
+
+function renderSchemes() {
+  var tipA = S.gapA <= 0
+    ? '<div class="tip ok">现有现金余 ' + f0(-S.gapA) + ' 万，无需垫资</div>'
+    : '<div class="tip wn">现金缺口 ' + f0(S.gapA) + ' 万</div>';
+  var tipB = S.gapB <= 0
+    ? '<div class="tip ok">余量 ' + f0(-S.gapB) + ' 万已减少贷款</div>'
+    : '<div class="tip bd">即使卖房仍缺 ' + f0(S.gapB) + ' 万</div>';
+
+  document.getElementById('r-schemes').innerHTML =
+    '<div class="sc">'
+    + '<div class="schdr"><span class="scname">方案 A · 先买后卖</span></div>'
+    + '<div class="scbody">'
+    + '<div class="pdiv2"><span class="ptag bb">阶段一 · 买房时</span></div>'
+    + payBlock(S.totA, S.spA, S.income) + tipA
+    + '<div class="pdiv2" style="margin-top:14px"><span class="ptag aa">阶段二 · 卖房后（' + f0(S.hsellNet) + '万提前还商贷）</span></div>'
+    + payBlock(S.totA2, S.spA2, S.income)
+    + '<div class="nt">商贷剩余 ' + f0(S.comLA2) + ' 万，月供减少 ' + yuan(S.totA - S.totA2) + '</div>'
+    + '</div></div>'
+    + '<div class="sc rec">'
+    + '<div class="schdr"><span class="scname">方案 B · 先卖后买</span><span class="rbadge">推荐</span></div>'
+    + '<div class="scbody">'
+    + '<div class="pdiv2"><span class="ptag aa">买房起始即享低月供</span></div>'
+    + payBlock(S.totB, S.spB, S.income) + tipB
+    + '</div></div>';
+}
+
+function renderLoan() {
+  document.getElementById('r-split').innerHTML =
+    '<table class="dtbl"><thead><tr><th></th><th>方案 A</th><th>方案 B</th></tr></thead><tbody>'
+    + '<tr><td style="color:var(--tx2)">总需贷款</td><td>' + f0(S.needLoanA) + ' 万</td><td>' + f0(S.needLoanB) + ' 万</td></tr>'
+    + '<tr><td class="cb">公积金贷款</td><td>' + f0(S.gjjLA) + ' 万</td><td>' + f0(S.gjjLB) + ' 万</td></tr>'
+    + '<tr><td class="cg">商业贷款</td><td>' + f0(S.comLA) + ' 万</td><td>' + f0(S.comLB) + ' 万</td></tr>'
+    + '<tr><td>合计 ✓</td><td>' + f0(S.gjjLA + S.comLA) + ' 万</td><td>' + f0(S.gjjLB + S.comLB) + ' 万</td></tr>'
+    + '</tbody></table>';
+
+  var gp2 = mpmt(S.gjjLA, S.gjjR, S.yrs);
+  var cp2 = mpmt(S.comLA2, S.comR, S.yrs);
+  document.getElementById('r-monthly').innerHTML =
+    '<table class="dtbl"><thead><tr><th></th>'
+    + '<th style="color:var(--blue)">A 买房时</th>'
+    + '<th style="color:var(--grn)">A 卖房后</th>'
+    + '<th style="color:#534AB7">方案 B</th>'
+    + '</tr></thead><tbody>'
+    + '<tr><td style="color:var(--tx2)">公积金月供</td><td>' + yuan(S.gjjPA) + '</td><td>' + yuan(gp2) + '</td><td>' + yuan(S.gjjPB) + '</td></tr>'
+    + '<tr><td style="color:var(--tx2)">商贷月供</td><td>' + yuan(S.comPA) + '</td><td>' + yuan(cp2) + '</td><td>' + yuan(S.comPB) + '</td></tr>'
+    + '<tr><td>月供合计</td><td>' + yuan(S.totA) + '</td><td>' + yuan(S.totA2) + '</td><td>' + yuan(S.totB) + '</td></tr>'
+    + '<tr><td class="cb">公积金冲抵</td><td class="cb">−' + yuan(S.spA.off) + '</td><td class="cb">−' + yuan(S.spA2.off) + '</td><td class="cb">−' + yuan(S.spB.off) + '</td></tr>'
+    + '<tr><td class="ca">现金实付</td><td class="ca">' + yuan(S.spA.cash) + '</td><td style="color:var(--grn)">' + yuan(S.spA2.cash) + '</td><td style="color:#534AB7">' + yuan(S.spB.cash) + '</td></tr>'
+    + '</tbody></table>';
+}
+
+function renderDTI() {
+  var dA  = S.totA  / S.income;
+  var dA2 = S.totA2 / S.income;
+  var dB  = S.totB  / S.income;
+  var dAn  = S.spA.cash  / S.income;
+  var dA2n = S.spA2.cash / S.income;
+  var dBn  = S.spB.cash  / S.income;
+
+  function bar(d) {
+    var w = d * 100; if (w > 100) w = 100;
+    return '<div class="dbar"><div class="dfill" style="width:' + w.toFixed(1) + '%;background:' + dc(d) + '"></div></div>';
+  }
+
+  document.getElementById('r-dtibars').innerHTML =
+    '<div class="drow"><span class="dlbl" style="color:var(--blue)">方案 A · 买房时</span><span class="dval" style="color:' + dc(dA) + '">' + pct(dA) + '</span></div>' + bar(dA)
+    + '<div class="drow"><span class="dlbl" style="color:var(--grn)">方案 A · 卖房后</span><span class="dval" style="color:' + dc(dA2) + '">' + pct(dA2) + '</span></div>' + bar(dA2)
+    + '<div class="drow"><span class="dlbl" style="color:#534AB7">方案 B</span><span class="dval" style="color:' + dc(dB) + '">' + pct(dB) + '</span></div>' + bar(dB)
+    + '<div class="dscale"><span>0%</span><span style="color:var(--grn)">安全 40%</span><span style="color:var(--amb)">警戒 55%</span><span>100%</span></div>';
+
+  var od = S.odebt > 0
+    ? '<tr><td class="ca">其他负债</td><td class="ca">−' + f1(S.odebt) + ' 万</td><td class="ca">−' + f1(S.odebt) + ' 万</td><td class="ca">−' + f1(S.odebt) + ' 万</td></tr>'
+    : '';
+  var dA_disp  = S.income - S.spA.cash  - S.odebt;
+  var dA2_disp = S.income - S.spA2.cash - S.odebt;
+  var dB_disp  = S.income - S.spB.cash  - S.odebt;
+
+  document.getElementById('r-dtitbl').innerHTML =
+    '<table class="dtbl"><thead><tr><th></th>'
+    + '<th style="color:var(--blue)">A 买房时</th>'
+    + '<th style="color:var(--grn)">A 卖房后</th>'
+    + '<th style="color:#534AB7">方案 B</th>'
+    + '</tr></thead><tbody>'
+    + '<tr><td style="color:var(--tx2)">月收入</td><td>' + f1(S.income) + ' 万</td><td>' + f1(S.income) + ' 万</td><td>' + f1(S.income) + ' 万</td></tr>'
+    + '<tr><td class="cb">公积金冲抵</td><td class="cb">−' + yuan(S.spA.off) + '</td><td class="cb">−' + yuan(S.spA2.off) + '</td><td class="cb">−' + yuan(S.spB.off) + '</td></tr>'
+    + '<tr><td class="ca">现金还款</td><td class="ca">−' + yuan(S.spA.cash) + '</td><td style="color:var(--grn)">−' + yuan(S.spA2.cash) + '</td><td style="color:#534AB7">−' + yuan(S.spB.cash) + '</td></tr>'
+    + od
+    + '<tr><td>可支配余额</td>'
+    + '<td style="color:' + (dA_disp  >= 1 ? 'var(--grn)' : 'var(--red)') + '">' + f2(dA_disp)  + ' 万</td>'
+    + '<td style="color:' + (dA2_disp >= 1 ? 'var(--grn)' : 'var(--red)') + '">' + f2(dA2_disp) + ' 万</td>'
+    + '<td style="color:' + (dB_disp  >= 1 ? 'var(--grn)' : 'var(--red)') + '">' + f2(dB_disp)  + ' 万</td>'
+    + '</tr>'
+    + '<tr><td style="color:var(--tx2)">净 DTI</td>'
+    + '<td style="color:' + dc(dAn)  + '">' + pct(dAn)  + '</td>'
+    + '<td style="color:' + dc(dA2n) + '">' + pct(dA2n) + '</td>'
+    + '<td style="color:' + dc(dBn)  + '">' + pct(dBn)  + '</td>'
+    + '</tr></tbody></table>';
+}
+
+function renderInterest() {
+  var n = S.yrs * 12;
+  var sm = 12;
+  var gjjIA = (mpmtM(S.gjjLA, S.gjjR, n) * n) - S.gjjLA;
+  var cp12  = mpmtM(S.comLA, S.comR, n);
+  var cb12  = remBal(S.comLA, S.comR, n, sm);
+  var cAft  = cb12 - S.hsellNet; if (cAft < 0) cAft = 0;
+  var rm2   = n - sm;
+  var cp2   = mpmtM(cAft, S.comR, rm2);
+  var comIA = (cp12 * sm) + S.hsellNet + (cp2 * rm2) - S.comLA;
+  if (comIA < 0) comIA = 0;
+  var totIA = gjjIA + comIA;
+  var totPA = S.gjjLA + S.comLA + totIA;
+
+  var gjjIB = (mpmtM(S.gjjLB, S.gjjR, n) * n) - S.gjjLB;
+  var comIB = (mpmtM(S.comLB, S.comR, n) * n) - S.comLB;
+  var totIB = gjjIB + comIB;
+  var totPB = S.gjjLB + S.comLB + totIB;
+  var saving = totIA - totIB;
+  var maxI = totIA > totIB ? totIA : totIB;
+  if (maxI < 0.01) maxI = 0.01;
+
+  var rows = [
+    { l:'公积金利息', a:gjjIA, b:gjjIB },
+    { l:'商贷利息',   a:comIA, b:comIB },
+    { l:'总利息',     a:totIA, b:totIB },
+    { l:'本金',       a:S.needLoanA, b:S.needLoanB },
+    { l:'本息合计',   a:totPA, b:totPB },
+  ];
+  var trows = '';
+  for (var i = 0; i < rows.length; i++) {
+    var r = rows[i];
+    var bold = (r.l === '总利息' || r.l === '本息合计');
+    trows += '<tr>'
+      + '<td style="' + (bold ? 'font-weight:600' : 'color:var(--tx2)') + '">' + r.l + '</td>'
+      + '<td style="text-align:right;' + (bold ? 'color:var(--blue)' : '') + '">' + f2(r.a) + ' 万</td>'
+      + '<td style="text-align:right;' + (bold ? 'color:var(--grn)' : '') + '">' + f2(r.b) + ' 万</td>'
+      + '</tr>';
+  }
+  var tbl = '<table class="dtbl" style="margin-bottom:14px"><thead><tr><th></th>'
+    + '<th style="color:var(--blue)">方案 A</th>'
+    + '<th style="color:var(--grn)">方案 B</th>'
+    + '</tr></thead><tbody>' + trows + '</tbody></table>';
+
+  var wA = (totIA / maxI * 100).toFixed(1);
+  var wB = (totIB / maxI * 100).toFixed(1);
+  var bars = '<div style="font-size:11px;color:var(--tx3);margin-bottom:8px">总利息对比</div>'
+    + '<div class="irow"><span class="ilb2">方案 A</span><div class="ibg"><div class="ifg" style="width:' + wA + '%;background:var(--blue)"></div></div><span class="ivl" style="color:var(--blue)">' + f2(totIA) + ' 万</span></div>'
+    + '<div class="irow"><span class="ilb2">方案 B</span><div class="ibg"><div class="ifg" style="width:' + wB + '%;background:var(--grn)"></div></div><span class="ivl" style="color:var(--grn)">' + f2(totIB) + ' 万</span></div>';
+
+  var sbox = '';
+  if (saving > 0) {
+    sbox = '<div class="sbox"><div><div class="slbl">选方案 B 节省利息</div><div class="sval">' + f2(saving) + ' 万</div><div class="snt">约 ' + Math.round(saving * 10000).toLocaleString() + ' 元</div></div>'
+         + '<div style="text-align:right"><div style="font-size:10px;color:var(--grntx)">节省比例</div><div class="spct">' + (saving / totIA * 100).toFixed(1) + '%</div></div></div>';
+  } else if (saving < 0) {
+    sbox = '<div class="sbox" style="background:var(--warnbg)"><div><div class="slbl" style="color:var(--warn)">方案 A 利息更少</div><div class="sval" style="color:var(--amb)">' + f2(-saving) + ' 万</div></div></div>';
+  }
+
+  var note = '<div style="font-size:11px;color:var(--tx3);margin-top:12px">方案A口径：约第1年卖房提前还商贷 ' + f0(S.hsellNet) + ' 万，实际时间不同会有出入。</div>';
+  document.getElementById('r-interest').innerHTML = tbl + bars + sbox + note;
+}
+
+function renderStress() {
+  var gL, cL;
+  if (SM === 'a2') { gL = S.gjjLA; cL = S.comLA2; }
+  else if (SM === 'b') { gL = S.gjjLB; cL = S.comLB; }
+  else { gL = S.gjjLA; cL = S.comLA; }
+
+  var scns = [
+    { n:'基准',           ic:0,     rc:0    },
+    { n:'收入 −10%',      ic:-0.1,  rc:0    },
+    { n:'收入 −20%',      ic:-0.2,  rc:0    },
+    { n:'利率 +1%',       ic:0,     rc:0.01 },
+    { n:'利率 +2%',       ic:0,     rc:0.02 },
+    { n:'收入−15%&利率+1%',ic:-0.15,rc:0.01 },
+  ];
+  var h = '';
+  for (var i = 0; i < scns.length; i++) {
+    var sc = scns[i];
+    var inc = S.income * (1 + sc.ic);
+    var tp  = mpmt(gL, S.gjjR + sc.rc, S.yrs) + mpmt(cL, S.comR + sc.rc, S.yrs);
+    var sv  = splitP(tp, S.gjjM);
+    var d   = tp / inc;
+    h += '<tr>'
+       + '<td style="font-size:11px">' + sc.n + '</td>'
+       + '<td style="color:var(--blue)">' + yuan(sv.off) + '</td>'
+       + '<td style="color:var(--amb)">'  + yuan(sv.cash) + '</td>'
+       + '<td style="color:' + dc(d) + '">' + pct(d) + '</td>'
+       + '<td>' + bdg(d) + '</td>'
+       + '</tr>';
+  }
+  document.getElementById('r-stress').innerHTML = h;
+}
+
+calc();
+</script>
+</body>
+</html>
