@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>购房能力测算</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" async></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" async></script>
 <style>
 :root {
   /* ── Bloomberg Green Palette ── */
@@ -58,32 +58,38 @@ body {
 .hdr-sub    { font-size: 11px; color: rgba(255,255,255,.65); margin-top: 2px; }
 
 /* ── Layout ── */
-.main   { max-width: 1160px; margin: 0 auto; padding: 20px 20px 60px; }
-.layout { display: grid; grid-template-columns: 310px 1fr; gap: 20px; align-items: start; }
+.main   { max-width: 1400px; margin: 0 auto; padding: 20px 24px 60px; }
+.layout { display: grid; grid-template-columns: 300px 1fr; gap: 20px; align-items: start; }
 
 /* ── Input Panel ── */
 .ipanel {
   background: var(--surf);
   border: 1px solid var(--bd2);
   border-radius: var(--r);
-  padding: 16px;
+  padding: 14px;
   position: sticky; top: 16px;
   max-height: calc(100vh - 40px);
   overflow-y: auto;
 }
-.ipanel::-webkit-scrollbar { width: 4px; }
+.ipanel::-webkit-scrollbar { width: 3px; }
 .ipanel::-webkit-scrollbar-thumb { background: var(--bd2); border-radius: 2px; }
 .grp { margin-bottom: 16px; }
 .grp:last-child { margin-bottom: 0; }
 .grp-lbl {
   font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
-  color: var(--accent); margin-bottom: 8px; padding-bottom: 5px;
+  color: var(--accent); margin-bottom: 4px; padding-bottom: 5px;
   border-bottom: 1px solid var(--bd2);
+}
+.grp-note {
+  font-size: 10px; color: var(--tx3); margin-bottom: 8px; line-height: 1.4;
+  padding: 4px 6px; background: var(--surf2); border-radius: var(--rs);
+  border-left: 2px solid var(--accent2);
 }
 .irow { margin-bottom: 10px; }
 .irow:last-child { margin-bottom: 0; }
 .irow-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
 .irow-lbl { font-size: 11px; color: var(--tx2); }
+.field-hint { font-size: 9px; color: var(--tx3); font-style: italic; }
 
 /* Dual input: slider + number box */
 .dual-input { display: flex; align-items: center; gap: 8px; }
@@ -123,26 +129,29 @@ body {
 .fee-total { color: var(--amber); }
 
 /* ── Cards ── */
-.results { display: flex; flex-direction: column; gap: 16px; }
+.results { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+.results .card-full { grid-column: 1 / -1; }
 .card {
   background: var(--surf); border: 1px solid var(--bd);
-  border-radius: var(--r); padding: 16px 18px;
+  border-radius: var(--r); padding: 18px 20px;
+  box-shadow: 0 1px 4px rgba(42,107,53,0.06);
 }
 .card-title {
   font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
-  color: var(--accent); margin-bottom: 14px; padding-bottom: 6px;
-  border-bottom: 1px solid var(--bd2);
+  color: var(--accent); margin-bottom: 16px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--bd2);
+  display: flex; align-items: center; gap: 8px;
 }
 
 /* ── Fund grid ── */
-.fund-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+.fund-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 12px; }
 .fcell { background: var(--surf2); border: 1px solid var(--bd); border-radius: var(--rs); padding: 10px 12px; }
 .fcell-lbl { font-size: 10px; color: var(--tx3); margin-bottom: 3px; }
 .fcell-val { font-size: 18px; font-weight: 700; font-family: var(--mono); }
 .fcell-sub { font-size: 9px; color: var(--tx3); margin-top: 2px; }
 
 /* ── Scheme cards ── */
-.scheme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.scheme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .sc { border: 1px solid var(--bd2); border-radius: var(--r); overflow: hidden; }
 .sc.rec { border-color: var(--accent); border-width: 2px; }
 .sc-hdr {
@@ -227,8 +236,8 @@ body {
 .dti-bar { height: 5px; background: var(--surf3); border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
 .dti-fill { height: 5px; border-radius: 3px; transition: width .4s; }
 .dti-scale { display: flex; justify-content: space-between; font-size: 9px; color: var(--tx3); margin-top: 2px; margin-bottom: 12px; }
-.det-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.dti-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.det-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.dti-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
 /* ── Interest ── */
 .ibar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 11px; }
@@ -325,14 +334,62 @@ body {
 .card:hover .card-exp { opacity: 1; }
 .card-exp:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
 
+
+/* Priority panel */
+.prio-panel {
+  background: var(--surf);
+  border: 2px solid var(--accent2);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+.prio-title {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 10px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--bd2);
+}
+.prio-row { margin-bottom: 10px; }
+.prio-row:last-child { margin-bottom: 0; }
+.prio-lbl { font-size: 11px; color: var(--tx2); margin-bottom: 4px; }
+select.prio-sel {
+  width: 100%; padding: 5px 8px; font-size: 12px; font-weight: 500;
+  border: 1px solid var(--bd2); border-radius: var(--rs);
+  background: var(--surf2); color: var(--tx);
+  cursor: pointer; outline: none; font-family: inherit;
+}
+select.prio-sel:focus { border-color: var(--accent); }
+.prio-check { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--tx2); margin-top: 6px; }
+.prio-check input[type=checkbox] { accent-color: var(--accent); width: 14px; height: 14px; cursor: pointer; }
+
 </style>
 </head>
 <body>
 
-<div class="hdr">
-  <div class="hdr-ticker">家庭财务分析</div>
-  <div class="hdr-title">购房能力测算</div>
-  <div class="hdr-sub">实时联动 · 双方案对比 · 压力测试</div>
+<div class="hdr" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px">
+  <div>
+    <div class="hdr-ticker">家庭财务分析</div>
+    <div class="hdr-title">购房能力测算</div>
+    <div class="hdr-sub">实时联动 · 双方案对比 · 压力测试</div>
+  </div>
+  <div style="display:flex;gap:20px;padding-bottom:2px">
+    <div style="text-align:right">
+      <div style="font-size:9px;color:rgba(255,255,255,.45);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">目标房价</div>
+      <div id="hdr-hp" style="font-size:18px;font-weight:700;color:#fff;font-family:SF Mono,monospace">— 万</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:9px;color:rgba(255,255,255,.45);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">方案A月供</div>
+      <div id="hdr-monthly-a" style="font-size:18px;font-weight:700;color:#A8E6B8;font-family:SF Mono,monospace">— 元</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:9px;color:rgba(255,255,255,.45);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">方案B月供</div>
+      <div id="hdr-monthly-b" style="font-size:18px;font-weight:700;color:#A8E6B8;font-family:SF Mono,monospace">— 元</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:9px;color:rgba(255,255,255,.45);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">首付需求</div>
+      <div id="hdr-down" style="font-size:18px;font-weight:700;color:#FFD580;font-family:SF Mono,monospace">— 万</div>
+    </div>
+  </div>
 </div>
 
 <!-- ── 导出工具栏 ── -->
@@ -373,91 +430,154 @@ body {
 <!-- ── 左侧输入面板 ── -->
 <div class="ipanel">
 
+  <div class="prio-panel">
+    <div class="prio-title">资金优先顺序设置</div>
+
+    <div class="prio-row">
+      <div class="prio-lbl">贷款优先顺序</div>
+      <select class="prio-sel" id="sel-loan-priority" onchange="onPriorityChange()">
+        <option value="gjj_first">① 公积金贷款优先（推荐）</option>
+        <option value="equal">② 公积金 / 商贷均等分配</option>
+        <option value="com_first">③ 商业贷款优先</option>
+        <option value="manual">④ 手动设置公积金比例</option>
+      </select>
+    </div>
+
+    <div class="prio-row" id="row-gjj-manual" style="display:none">
+      <div class="irow-top"><span class="irow-lbl">公积金贷款比例</span><span class="unit">%</span></div>
+      <div class="dual-input">
+        <input type="range" id="r-gjjManualPct" min="0" max="100" step="5" value="50" oninput="syncFromSlider('gjjManualPct')">
+        <input type="number" class="num-box" id="n-gjjManualPct" min="0" max="100" step="5" value="50"
+          oninput="syncFromNum('gjjManualPct')"
+          onfocus="numFocus(this)" onblur="numBlur('gjjManualPct',this)">
+      </div>
+    </div>
+
+    <div class="prio-row">
+      <div class="prio-lbl">现金来源顺序</div>
+      <select class="prio-sel" id="sel-cash-priority" onchange="onPriorityChange()">
+        <option value="savings_first">存款现金优先使用</option>
+        <option value="parents_first">父母支持优先使用</option>
+      </select>
+    </div>
+
+    <div class="prio-row">
+      <div class="prio-lbl">剩余现金处理方式</div>
+
+      <div style="font-size:10px;color:var(--tx3);margin-bottom:6px;padding:4px 8px;background:var(--surf2);border-radius:4px">
+        剩余现金 = 可用现金 - 首付 - 税费。可选择用于增加首付（减少贷款）或保留现金。
+      </div>
+
+      <div style="font-size:10px;font-weight:600;color:var(--tx2);margin:6px 0 4px">方案 A（先买后卖）</div>
+      <label class="prio-check">
+        <input type="checkbox" id="chk-surplus-a" onchange="onPriorityChange()">
+        现金剩余用于增加首付（减少贷款）
+      </label>
+      <label class="prio-check" style="margin-top:4px;display:none" id="row-keepgjj-a">
+        <input type="checkbox" id="chk-keepgjj-a" onchange="onPriorityChange()" checked>
+        公积金贷款保持上限，只减少商贷
+      </label>
+
+      <div style="font-size:10px;font-weight:600;color:var(--tx2);margin:10px 0 4px">方案 B（先卖后买）</div>
+      <label class="prio-check">
+        <input type="checkbox" id="chk-surplus-b" onchange="onPriorityChange()" checked>
+        现金剩余用于增加首付（减少贷款）
+      </label>
+      <label class="prio-check" style="margin-top:4px" id="row-keepgjj-b">
+        <input type="checkbox" id="chk-keepgjj-b" onchange="onPriorityChange()" checked>
+        公积金贷款保持上限，只减少商贷
+      </label>
+    </div>
+  </div>
+
   <div class="grp">
     <div class="grp-lbl">家庭收入</div>
+    <div class="grp-note">税后所有收入来源合计（工资＋奖金＋投资等）</div>
     <div class="irow">
       <div class="irow-top"><span class="irow-lbl">月收入（税后）</span><span class="unit">万</span></div>
       <div class="dual-input">
         <input type="range" id="r-income" min="0" max="50" step="0.5" value="0" oninput="syncFromSlider('income')">
-        <input type="number" class="num-box" id="n-income" min="0" max="50" step="0.5" value="0" oninput="syncFromNum('income')">
+        <input type="number" class="num-box" id="n-income" min="0" max="50" step="0.5" value="0" oninput="syncFromNum('income')" onfocus="numFocus(this)" onblur="numBlur('income',this)">
       </div>
     </div>
   </div>
 
   <div class="grp">
     <div class="grp-lbl">可用资金</div>
+    <div class="grp-note">购房首付优先顺序：存款 → 父母支持 → 商业贷款</div>
     <div class="irow">
       <div class="irow-top"><span class="irow-lbl">存款现金</span><span class="unit">万</span></div>
       <div class="dual-input">
         <input type="range" id="r-savings" min="0" max="600" step="5" value="0" oninput="syncFromSlider('savings')">
-        <input type="number" class="num-box" id="n-savings" min="0" max="600" step="5" value="0" oninput="syncFromNum('savings')">
+        <input type="number" class="num-box" id="n-savings" min="0" max="600" step="5" value="0" oninput="syncFromNum('savings')" onfocus="numFocus(this)" onblur="numBlur('savings',this)">
       </div>
     </div>
     <div class="irow">
       <div class="irow-top"><span class="irow-lbl">父母可支持</span><span class="unit">万</span></div>
       <div class="dual-input">
         <input type="range" id="r-parents" min="0" max="300" step="10" value="0" oninput="syncFromSlider('parents')">
-        <input type="number" class="num-box" id="n-parents" min="0" max="300" step="10" value="0" oninput="syncFromNum('parents')">
+        <input type="number" class="num-box" id="n-parents" min="0" max="300" step="10" value="0" oninput="syncFromNum('parents')" onfocus="numFocus(this)" onblur="numBlur('parents',this)">
       </div>
     </div>
     <div class="irow">
-      <div class="irow-top"><span class="irow-lbl">待售房产市值</span><span class="unit">万</span></div>
+      <div class="irow-top"><span class="irow-lbl">待售房产市值<span class="field-hint"> · 挂牌价或评估价，填0表示无待售房产</span></span><span class="unit">万</span></div>
       <div class="dual-input">
         <input type="range" id="r-hsell" min="0" max="1000" step="10" value="0" oninput="syncFromSlider('hsell')">
-        <input type="number" class="num-box" id="n-hsell" min="0" max="1000" step="10" value="0" oninput="syncFromNum('hsell')">
+        <input type="number" class="num-box" id="n-hsell" min="0" max="1000" step="10" value="0" oninput="syncFromNum('hsell')" onfocus="numFocus(this)" onblur="numBlur('hsell',this)">
       </div>
     </div>
     <div class="irow">
-      <div class="irow-top"><span class="irow-lbl">待售房产余贷</span><span class="unit">万</span></div>
+      <div class="irow-top"><span class="irow-lbl">待售房产余贷<span class="field-hint"> · 若已还清则填0</span></span><span class="unit">万</span></div>
       <div class="dual-input">
         <input type="range" id="r-hdebt" min="0" max="500" step="10" value="0" oninput="syncFromSlider('hdebt')">
-        <input type="number" class="num-box" id="n-hdebt" min="0" max="500" step="10" value="0" oninput="syncFromNum('hdebt')">
+        <input type="number" class="num-box" id="n-hdebt" min="0" max="500" step="10" value="0" oninput="syncFromNum('hdebt')" onfocus="numFocus(this)" onblur="numBlur('hdebt',this)">
       </div>
     </div>
     <div class="irow">
-      <div class="irow-top"><span class="irow-lbl">其他月负债</span><span class="unit">万</span></div>
+      <div class="irow-top"><span class="irow-lbl">其他月负债<span class="field-hint"> · 车贷、消费贷等每月还款额</span></span><span class="unit">万</span></div>
       <div class="dual-input">
         <input type="range" id="r-odebt" min="0" max="5" step="0.1" value="0" oninput="syncFromSlider('odebt')">
-        <input type="number" class="num-box" id="n-odebt" min="0" max="5" step="0.1" value="0" oninput="syncFromNum('odebt')">
+        <input type="number" class="num-box" id="n-odebt" min="0" max="5" step="0.1" value="0" oninput="syncFromNum('odebt')" onfocus="numFocus(this)" onblur="numBlur('odebt',this)">
       </div>
     </div>
   </div>
 
   <div class="grp">
     <div class="grp-lbl">购房条件</div>
+    <div class="grp-note">首付最低30%（上海首套），附加费随总价自动联动</div>
     <div class="irow">
       <div class="irow-top"><span class="irow-lbl">目标总价</span><span class="unit">万</span></div>
       <div class="dual-input">
         <input type="range" id="r-hp" min="0" max="2000" step="10" value="0" oninput="syncFromSlider('hp')">
-        <input type="number" class="num-box" id="n-hp" min="0" max="2000" step="10" value="0" oninput="syncFromNum('hp')">
+        <input type="number" class="num-box" id="n-hp" min="0" max="2000" step="10" value="0" oninput="syncFromNum('hp')" onfocus="numFocus(this)" onblur="numBlur('hp',this)">
       </div>
     </div>
     <div class="irow">
       <div class="irow-top"><span class="irow-lbl">首付比例</span><span class="unit">%</span></div>
       <div class="dual-input">
         <input type="range" id="r-dpct" min="30" max="70" step="5" value="30" oninput="syncFromSlider('dpct')">
-        <input type="number" class="num-box" id="n-dpct" min="30" max="70" step="5" value="30" oninput="syncFromNum('dpct')">
+        <input type="number" class="num-box" id="n-dpct" min="30" max="70" step="5" value="30" oninput="syncFromNum('dpct')" onfocus="numFocus(this)" onblur="numBlur('dpct',this)">
       </div>
     </div>
     <div class="irow">
       <div class="irow-top"><span class="irow-lbl">中介费比例</span><span class="unit">%</span></div>
       <div class="dual-input">
         <input type="range" id="r-agentPct" min="0" max="3" step="0.1" value="1.5" oninput="syncFromSlider('agentPct')">
-        <input type="number" class="num-box" id="n-agentPct" min="0" max="3" step="0.1" value="1.5" oninput="syncFromNum('agentPct')">
+        <input type="number" class="num-box" id="n-agentPct" min="0" max="3" step="0.1" value="1.5" oninput="syncFromNum('agentPct')" onfocus="numFocus(this)" onblur="numBlur('agentPct',this)">
       </div>
     </div>
     <div class="irow">
       <div class="irow-top"><span class="irow-lbl">契税比例</span><span class="unit">%</span></div>
       <div class="dual-input">
         <input type="range" id="r-deedPct" min="0" max="5" step="0.5" value="1" oninput="syncFromSlider('deedPct')">
-        <input type="number" class="num-box" id="n-deedPct" min="0" max="5" step="0.5" value="1" oninput="syncFromNum('deedPct')">
+        <input type="number" class="num-box" id="n-deedPct" min="0" max="5" step="0.5" value="1" oninput="syncFromNum('deedPct')" onfocus="numFocus(this)" onblur="numBlur('deedPct',this)">
       </div>
     </div>
     <div class="irow">
       <div class="irow-top"><span class="irow-lbl">家具家电预算</span><span class="unit">万</span></div>
       <div class="dual-input">
         <input type="range" id="r-furn" min="0" max="50" step="1" value="0" oninput="syncFromSlider('furn')">
-        <input type="number" class="num-box" id="n-furn" min="0" max="50" step="1" value="0" oninput="syncFromNum('furn')">
+        <input type="number" class="num-box" id="n-furn" min="0" max="50" step="1" value="0" oninput="syncFromNum('furn')" onfocus="numFocus(this)" onblur="numBlur('furn',this)">
       </div>
     </div>
     <div class="fee-box">
@@ -470,50 +590,52 @@ body {
 
   <div class="grp">
     <div class="grp-lbl">公积金参数</div>
+    <div class="grp-note">公积金享2.6%优惠利率；余额可补贴月缴不足部分</div>
     <div class="irow">
       <div class="irow-top"><span class="irow-lbl">可贷上限</span><span class="unit">万</span></div>
       <div class="dual-input">
         <input type="range" id="r-gjjQ" min="0" max="200" step="10" value="200" oninput="syncFromSlider('gjjQ')">
-        <input type="number" class="num-box" id="n-gjjQ" min="0" max="200" step="10" value="200" oninput="syncFromNum('gjjQ')">
+        <input type="number" class="num-box" id="n-gjjQ" min="0" max="200" step="10" value="200" oninput="syncFromNum('gjjQ')" onfocus="numFocus(this)" onblur="numBlur('gjjQ',this)">
       </div>
     </div>
     <div class="irow">
       <div class="irow-top"><span class="irow-lbl">月缴金额（双方合计）</span><span class="unit">万</span></div>
       <div class="dual-input">
         <input type="range" id="r-gjjM" min="0.05" max="2" step="0.05" value="0.6" oninput="syncFromSlider('gjjM')">
-        <input type="number" class="num-box" id="n-gjjM" min="0.05" max="2" step="0.05" value="0.6" oninput="syncFromNum('gjjM')">
+        <input type="number" class="num-box" id="n-gjjM" min="0.05" max="2" step="0.05" value="0.6" oninput="syncFromNum('gjjM')" onfocus="numFocus(this)" onblur="numBlur('gjjM',this)">
       </div>
     </div>
     <div class="irow">
-      <div class="irow-top"><span class="irow-lbl">账户余额（可提取抵扣）</span><span class="unit">万</span></div>
+      <div class="irow-top"><span class="irow-lbl">账户余额（可提取抵扣）<span class="field-hint"> · 可用于补贴月供不足的公积金账户余额</span></span><span class="unit">万</span></div>
       <div class="dual-input">
         <input type="range" id="r-gjjBal" min="0" max="100" step="1" value="0" oninput="syncFromSlider('gjjBal')">
-        <input type="number" class="num-box" id="n-gjjBal" min="0" max="100" step="1" value="0" oninput="syncFromNum('gjjBal')">
+        <input type="number" class="num-box" id="n-gjjBal" min="0" max="100" step="1" value="0" oninput="syncFromNum('gjjBal')" onfocus="numFocus(this)" onblur="numBlur('gjjBal',this)">
       </div>
     </div>
     <div class="irow">
       <div class="irow-top"><span class="irow-lbl">贷款利率</span><span class="unit">%</span></div>
       <div class="dual-input">
         <input type="range" id="r-gjjR" min="1.5" max="4.0" step="0.05" value="2.6" oninput="syncFromSlider('gjjR')">
-        <input type="number" class="num-box" id="n-gjjR" min="1.5" max="4.0" step="0.05" value="2.6" oninput="syncFromNum('gjjR')">
+        <input type="number" class="num-box" id="n-gjjR" min="1.5" max="4.0" step="0.05" value="2.6" oninput="syncFromNum('gjjR')" onfocus="numFocus(this)" onblur="numBlur('gjjR',this)">
       </div>
     </div>
   </div>
 
   <div class="grp">
     <div class="grp-lbl">商业贷款参数</div>
+    <div class="grp-note">商贷利率参考LPR首套~3.05%；卖房款优先提前归还商贷</div>
     <div class="irow">
       <div class="irow-top"><span class="irow-lbl">贷款利率</span><span class="unit">%</span></div>
       <div class="dual-input">
         <input type="range" id="r-comR" min="2.0" max="7.0" step="0.05" value="3.05" oninput="syncFromSlider('comR')">
-        <input type="number" class="num-box" id="n-comR" min="2.0" max="7.0" step="0.05" value="3.05" oninput="syncFromNum('comR')">
+        <input type="number" class="num-box" id="n-comR" min="2.0" max="7.0" step="0.05" value="3.05" oninput="syncFromNum('comR')" onfocus="numFocus(this)" onblur="numBlur('comR',this)">
       </div>
     </div>
     <div class="irow">
       <div class="irow-top"><span class="irow-lbl">贷款年限</span><span class="unit">年</span></div>
       <div class="dual-input">
         <input type="range" id="r-yrs" min="10" max="30" step="5" value="25" oninput="syncFromSlider('yrs')">
-        <input type="number" class="num-box" id="n-yrs" min="10" max="30" step="5" value="25" oninput="syncFromNum('yrs')">
+        <input type="number" class="num-box" id="n-yrs" min="10" max="30" step="5" value="25" oninput="syncFromNum('yrs')" onfocus="numFocus(this)" onblur="numBlur('yrs',this)">
       </div>
     </div>
   </div>
@@ -523,12 +645,12 @@ body {
 <!-- ── 右侧结果区 ── -->
 <div class="results">
 
-  <div class="card" id="card-funds">
+  <div class="card card-full" id="card-funds">
     <div class="card-title">可用资金池</div>
     <div class="fund-grid" id="r-funds"></div>
   </div>
 
-  <div class="card" id="card-schemes">
+  <div class="card card-full" id="card-schemes">
     <div class="card-title">方案对比 — 月供拆分</div>
     <div class="scheme-grid" id="r-schemes"></div>
   </div>
@@ -548,7 +670,7 @@ body {
     <div id="r-interest"></div>
   </div>
 
-  <div class="card" id="card-stress">
+  <div class="card card-full" id="card-stress">
     <div class="card-title">压力测试</div>
     <div class="stress-tabs">
       <button class="stress-tab on" onclick="setSt('a1',this)">方案 A · 买房时</button>
@@ -571,93 +693,175 @@ body {
 </div><!-- end main -->
 
 <script>
-/* ═══ Dual-input sync ═══ */
-var FIELDS = ['income','savings','parents','hsell','hdebt','odebt','hp','dpct','agentPct','deedPct','furn','gjjQ','gjjM','gjjBal','gjjR','comR','yrs'];
-
+/* --- Dual-input sync --- */
 function syncFromSlider(id) {
-  var v = parseFloat(document.getElementById('r-'+id).value);
-  document.getElementById('n-'+id).value = v;
+  var v = parseFloat(document.getElementById('r-' + id).value);
+  document.getElementById('n-' + id).value = v;
   calc();
 }
 function syncFromNum(id) {
-  var el = document.getElementById('n-'+id);
-  var v = parseFloat(el.value);
-  var mn = parseFloat(el.min||0), mx = parseFloat(el.max||9999);
-  if(isNaN(v)) return;
+  var el  = document.getElementById('n-' + id);
+  var raw = el.value;
+  if (raw === '' || raw === '-' || raw.slice(-1) === '.') return;
+  var v = parseFloat(raw);
+  if (isNaN(v)) return;
+  var mn = parseFloat(el.min || 0);
+  var mx = parseFloat(el.max || 999999);
   v = Math.min(mx, Math.max(mn, v));
-  document.getElementById('r-'+id).value = v;
+  document.getElementById('r-' + id).value = v;
   calc();
 }
-function gv(id) { return parseFloat(document.getElementById('n-'+id).value)||0; }
+function numFocus(el) {
+  if (el.value === '0' || parseFloat(el.value) === 0) el.value = '';
+  if (el.select) el.select();
+}
+function numBlur(id, el) {
+  var raw = el.value.trim();
+  if (raw === '' || isNaN(parseFloat(raw))) {
+    el.value = 0;
+    document.getElementById('r-' + id).value = 0;
+    calc(); return;
+  }
+  var v  = parseFloat(raw);
+  var mn = parseFloat(el.min || 0);
+  var mx = parseFloat(el.max || 999999);
+  v = Math.min(mx, Math.max(mn, v));
+  el.value = v;
+  document.getElementById('r-' + id).value = v;
+  calc();
+}
+function gv(id) { return parseFloat(document.getElementById('n-' + id).value) || 0; }
+function gsel(id) { return document.getElementById(id).value; }
 
-/* ═══ Math ═══ */
+/* --- Priority order state --- */
 var SM = 'a1';
 var S  = {};
 
 function setSt(m, el) {
   SM = m;
-  document.querySelectorAll('.stress-tab').forEach(function(b){ b.classList.remove('on'); });
+  document.querySelectorAll('.stress-tab').forEach(function(b) { b.classList.remove('on'); });
   el.classList.add('on');
   renderStress();
 }
 
-function mpmt(p,r,y){
-  if(p<=0) return 0;
-  var rm=r/12, n=y*12, f=Math.pow(1+rm,n);
-  return p*rm*f/(f-1);
-}
-function mpmtM(p,r,m){
-  if(p<=0||m<=0) return 0;
-  var rm=r/12, f=Math.pow(1+rm,m);
-  return p*rm*f/(f-1);
-}
-function remBal(p,r,tot,paid){
-  if(p<=0) return 0;
-  var rm=r/12, f=Math.pow(1+rm,tot), fm=Math.pow(1+rm,paid);
-  return p*(f-fm)/(f-1);
-}
-function yuan(n){ return Math.round(n*10000).toLocaleString()+'元'; }
-function f0(n){ return ''+Math.round(n); }
-function f1(n){ return n.toFixed(1); }
-function f2(n){ return n.toFixed(2); }
-function pct(n){ return (n*100).toFixed(1)+'%'; }
-function dc(d){ return d<0.4?'var(--accent)':d<0.55?'var(--amber)':'var(--red)'; }
-function bdg(d){
-  if(d<0.4)  return '<span class="bdg bok">可控</span>';
-  if(d<0.55) return '<span class="bdg bwn">偏紧</span>';
-  return '<span class="bdg bbd">高压</span>';
+function onPriorityChange() {
+  // Show "keep GJJ max" option only when surplus checkbox is checked
+  var surpA = document.getElementById('chk-surplus-a').checked;
+  var surpB = document.getElementById('chk-surplus-b').checked;
+  var rowA  = document.getElementById('row-keepgjj-a');
+  var rowB  = document.getElementById('row-keepgjj-b');
+  if (rowA) rowA.style.display = surpA ? 'flex' : 'none';
+  if (rowB) rowB.style.display = surpB ? 'flex' : 'none';
+  calc();
 }
 
-/**
- * 公积金冲抵逻辑（含余额）：
- * 每月月缴 gjjM 直接抵扣月供；
- * 若月缴不足，可用账户余额（gjjBal）补充，余额用完为止。
- * 商贷月供从现金支付，公积金月供优先用月缴+余额抵扣。
- */
+/* --- Math helpers --- */
+function mpmt(p, r, y) {
+  if (p <= 0) return 0;
+  var rm = r / 12, n = y * 12, f = Math.pow(1 + rm, n);
+  return p * rm * f / (f - 1);
+}
+function mpmtM(p, r, m) {
+  if (p <= 0 || m <= 0) return 0;
+  var rm = r / 12, f = Math.pow(1 + rm, m);
+  return p * rm * f / (f - 1);
+}
+function remBal(p, r, tot, paid) {
+  if (p <= 0) return 0;
+  var rm = r / 12, f = Math.pow(1 + rm, tot), fm = Math.pow(1 + rm, paid);
+  return p * (f - fm) / (f - 1);
+}
+function yuan(n) { return Math.round(n * 10000).toLocaleString() + '\u5143'; }
+function f0(n)   { return '' + Math.round(n); }
+function f1(n)   { return n.toFixed(1); }
+function f2(n)   { return n.toFixed(2); }
+function pct(n)  { return (n * 100).toFixed(1) + '%'; }
+function dc(d) {
+  if (d < 0.4)  return 'var(--accent)';
+  if (d < 0.55) return 'var(--amber)';
+  return 'var(--red)';
+}
+function bdg(d) {
+  if (d < 0.4)  return '<span class="bdg bok">\u53ef\u63a7</span>';
+  if (d < 0.55) return '<span class="bdg bwn">\u504f\u7d27</span>';
+  return '<span class="bdg bbd">\u9ad8\u538b</span>';
+}
+
+/* splitPay: monthly payment breakdown */
 function splitPay(gjjPay, comPay, gjjM, gjjBal) {
-  var total = gjjPay + comPay;
-  // 公积金月供先用月缴抵，不足部分用余额补
-  var gjjPayLeft = gjjPay;
-  var usedFromMonthly = Math.min(gjjM, gjjPayLeft);
-  gjjPayLeft -= usedFromMonthly;
-  var usedFromBal = Math.min(gjjBal, gjjPayLeft);
-  gjjPayLeft -= usedFromBal;
-  // 剩余公积金月供 + 全部商贷月供 = 现金支出
-  var cash = gjjPayLeft + comPay;
-  var off  = usedFromMonthly + usedFromBal;
+  var total   = gjjPay + comPay;
+  var gjjLeft = gjjPay;
+  var usedM   = Math.min(gjjM,   gjjLeft); gjjLeft -= usedM;
+  var usedB   = Math.min(gjjBal, gjjLeft); gjjLeft -= usedB;
   return {
-    off:  off,
-    cash: cash,
-    total: total,
-    gjjPay: gjjPay,
-    comPay: comPay,
-    usedMonthly: usedFromMonthly,
-    usedBal: usedFromBal,
-    gjjPayLeft: gjjPayLeft
+    total: total, gjjPay: gjjPay, comPay: comPay,
+    usedMonthly: usedM, usedBal: usedB,
+    off: usedM + usedB, cash: gjjLeft + comPay
   };
 }
 
-/* ═══ Main calc ═══ */
+/*
+ * calcLoans:
+ * Given total loan needed and cash available (surplus over cashNeed),
+ * allocate between GJJ and commercial based on priority order.
+ *
+ * Priority modes:
+ *   gjj_first  : GJJ to max, cash surplus reduces commercial, then commercial fills gap
+ *   cash_first : cash surplus reduces all loans first, then GJJ, then commercial
+ *   com_first  : commercial fills first (rarely used but for comparison)
+ *   manual     : user-set GJJ ratio
+ *
+ * Key insight:
+ *   totalLoan = hp - down  (fixed by down payment ratio)
+ *   Cash surplus over cashNeed can OPTIONALLY increase down payment (reducing totalLoan)
+ *   This is the "use surplus cash" toggle
+ */
+function calcLoans(hp, down, gjjQ, cashSurplus, useSurplus, keepGjjMax, loanPriority, gjjManualPct) {
+  // When useSurplus=true: surplus cash reduces loans
+  // When keepGjjMax=true: surplus only reduces commercial loan, GJJ stays at max
+  var gjjTarget = Math.min(gjjQ, hp - down);  // max GJJ loan possible
+  var surplus = useSurplus ? cashSurplus : 0;
+
+  var totalLoan, gjjL, comL;
+
+  if (loanPriority === 'gjj_first') {
+    if (keepGjjMax) {
+      // GJJ always at max, surplus only reduces commercial
+      gjjL     = gjjTarget;
+      var baseCom = Math.max(0, (hp - down) - gjjL);
+      comL     = Math.max(0, baseCom - surplus);
+      totalLoan = gjjL + comL;
+    } else {
+      // Surplus reduces total loan (may also reduce GJJ if commercial already zero)
+      totalLoan = Math.max(0, hp - down - surplus);
+      gjjL     = Math.min(gjjQ, totalLoan);
+      comL     = totalLoan - gjjL;
+    }
+  } else if (loanPriority === 'com_first') {
+    // Commercial fills everything, GJJ = 0
+    totalLoan = Math.max(0, hp - down - surplus);
+    gjjL = 0;
+    comL = totalLoan;
+  } else if (loanPriority === 'equal') {
+    totalLoan = Math.max(0, hp - down - surplus);
+    var half  = totalLoan / 2;
+    gjjL = Math.min(gjjQ, half);
+    comL = totalLoan - gjjL;
+  } else if (loanPriority === 'manual') {
+    totalLoan = Math.max(0, hp - down - surplus);
+    var ratio = Math.min(1, Math.max(0, gjjManualPct / 100));
+    gjjL = Math.min(gjjQ, totalLoan * ratio);
+    comL = totalLoan - gjjL;
+  } else {
+    totalLoan = Math.max(0, hp - down - surplus);
+    gjjL = Math.min(gjjQ, totalLoan);
+    comL = totalLoan - gjjL;
+  }
+
+  return { totalLoan: gjjL + comL, gjjL: gjjL, comL: comL };
+}
+
+/* --- Main calc --- */
 function calc() {
   var income   = gv('income');
   var savings  = gv('savings');
@@ -666,58 +870,127 @@ function calc() {
   var hdebt    = gv('hdebt');
   var odebt    = gv('odebt');
   var hp       = gv('hp');
-  var dpct     = gv('dpct')/100;
+  var dpct     = gv('dpct') / 100;
   var gjjQ     = gv('gjjQ');
   var gjjM     = gv('gjjM');
   var gjjBal   = gv('gjjBal');
-  var gjjR     = gv('gjjR')/100;
-  var comR     = gv('comR')/100;
+  var gjjR     = gv('gjjR') / 100;
+  var comR     = gv('comR') / 100;
   var yrs      = gv('yrs');
-  var agentPct = gv('agentPct')/100;
-  var deedPct  = gv('deedPct')/100;
+  var agentPct = gv('agentPct') / 100;
+  var deedPct  = gv('deedPct') / 100;
   var furn     = gv('furn');
+  var gjjManualPct = gv('gjjManualPct') || 50;
+
+  // Priority settings
+  var loanPriority = gsel('sel-loan-priority');
+  var cashPriority = gsel('sel-cash-priority');
+  var useSurplusA  = document.getElementById('chk-surplus-a').checked;
+  var useSurplusB  = document.getElementById('chk-surplus-b').checked;
+
+  // Show/hide manual GJJ pct slider
+  document.getElementById('row-gjj-manual').style.display =
+    loanPriority === 'manual' ? 'block' : 'none';
 
   var agent  = hp * agentPct;
   var deed   = hp * deedPct;
   var extras = agent + deed + furn;
-  document.getElementById('lb-agent').textContent  = f1(agent)+' 万';
-  document.getElementById('lb-deed').textContent   = f1(deed)+' 万';
-  document.getElementById('lb-furnv').textContent  = f1(furn)+' 万';
-  document.getElementById('lb-extras').textContent = f1(extras)+' 万';
+  document.getElementById('lb-agent').textContent  = f1(agent) + ' \u4e07';
+  document.getElementById('lb-deed').textContent   = f1(deed)  + ' \u4e07';
+  document.getElementById('lb-furnv').textContent  = f1(furn)  + ' \u4e07';
+  document.getElementById('lb-extras').textContent = f1(extras) + ' \u4e07';
 
   var down     = hp * dpct;
-  var cashNeed = down + extras;
+  var cashNeed = down + extras;      // cash required for down + fees
   var hsellNet = Math.max(0, hsell - hdebt);
-  var cashImm  = savings + parents;
+
+  // Cash source allocation (savings first vs parents first)
+  var src1 = cashPriority === 'parents_first' ? parents : savings;
+  var src2 = cashPriority === 'parents_first' ? savings : parents;
+  var src1Label = cashPriority === 'parents_first' ? '\u7236\u6bcd\u652f\u6301' : '\u5b58\u6b3e\u73b0\u91d1';
+  var src2Label = cashPriority === 'parents_first' ? '\u5b58\u6b3e\u73b0\u91d1' : '\u7236\u6bcd\u652f\u6301';
+  var cashImm  = savings + parents;   // total immediate cash
   var cashFull = cashImm + hsellNet;
   var gapA = cashNeed - cashImm;
   var gapB = cashNeed - cashFull;
 
-  var needLoanA = hp - down;
-  var gjjLA = Math.min(gjjQ, needLoanA);
-  var comLA = needLoanA - gjjLA;
-  var gjjPA = mpmt(gjjLA, gjjR, yrs);
-  var comPA = mpmt(comLA, comR, yrs);
-  var spA   = splitPay(gjjPA, comPA, gjjM, gjjBal);
+  // Surplus cash = cash beyond what's needed for down + fees
+  var cashSurplusA = Math.max(0, cashImm  - cashNeed);
+  var cashSurplusB = Math.max(0, cashFull - cashNeed);
 
-  var comLA2 = Math.max(0, comLA - hsellNet);
-  var gjjPA2 = mpmt(gjjLA, gjjR, yrs);
-  var comPA2 = mpmt(comLA2, comR, yrs);
-  var spA2   = splitPay(gjjPA2, comPA2, gjjM, gjjBal);
+  // --- Scheme A: buy first ---
+  var keepGjjA = document.getElementById('chk-keepgjj-a').checked;
+  var keepGjjB = document.getElementById('chk-keepgjj-b').checked;
+  var loansA  = calcLoans(hp, down, gjjQ, cashSurplusA, useSurplusA, keepGjjA, loanPriority, gjjManualPct);
+  var gjjLA   = loansA.gjjL,  comLA = loansA.comL;
+  var gjjPA   = mpmt(gjjLA, gjjR, yrs);
+  var comPA   = mpmt(comLA, comR, yrs);
+  var spA     = splitPay(gjjPA, comPA, gjjM, gjjBal);
 
-  var extraB    = Math.max(0, -gapB);
-  var needLoanB = Math.max(0, needLoanA - extraB);
-  var gjjLB = Math.min(gjjQ, needLoanB);
-  var comLB = needLoanB - gjjLB;
-  var gjjPB = mpmt(gjjLB, gjjR, yrs);
-  var comPB = mpmt(comLB, comR, yrs);
-  var spB   = splitPay(gjjPB, comPB, gjjM, gjjBal);
+  // Scheme A phase 2: sell house, repay commercial loan
+  var comLA2             = Math.max(0, comLA - hsellNet);
+  var sellCashAfterRepay = Math.max(0, hsellNet - comLA);
+  var gjjPA2             = mpmt(gjjLA, gjjR, yrs);
+  var comPA2             = mpmt(comLA2, comR, yrs);
+  var spA2               = splitPay(gjjPA2, comPA2, gjjM, gjjBal);
 
-  S = { income, savings, parents, hsell, hdebt, odebt, hp, dpct, gjjQ, gjjM, gjjBal, gjjR, comR, yrs,
-        agent, deed, extras, down, cashNeed, hsellNet, cashImm, cashFull, gapA, gapB,
-        needLoanA, gjjLA, comLA, gjjPA, comPA, spA,
-        comLA2, gjjPA2, comPA2, spA2,
-        needLoanB, gjjLB, comLB, gjjPB, comPB, spB };
+  // --- Scheme B: sell first ---
+  var loansB  = calcLoans(hp, down, gjjQ, cashSurplusB, useSurplusB, keepGjjB, loanPriority, gjjManualPct);
+  var gjjLB   = loansB.gjjL, comLB = loansB.comL;
+  var gjjPB   = mpmt(gjjLB, gjjR, yrs);
+  var comPB   = mpmt(comLB, comR, yrs);
+  var spB     = splitPay(gjjPB, comPB, gjjM, gjjBal);
+
+  // Cash breakdown for display
+  var savDown = cashPriority === 'parents_first'
+    ? Math.min(parents, cashNeed)
+    : Math.min(savings, cashNeed);
+  var parDown = cashPriority === 'parents_first'
+    ? Math.min(savings, Math.max(0, cashNeed - parents))
+    : Math.min(parents, Math.max(0, cashNeed - savings));
+  var savLoan = Math.max(0, savings - (cashPriority === 'parents_first' ? Math.min(savings, Math.max(0, cashNeed - parents)) : Math.min(savings, cashNeed)));
+  var parLoan = Math.max(0, parents - (cashPriority === 'parents_first' ? Math.min(parents, cashNeed) : Math.min(parents, Math.max(0, cashNeed - savings))));
+
+  S = {
+    income:income, savings:savings, parents:parents, hsell:hsell, hdebt:hdebt, odebt:odebt,
+    hp:hp, dpct:dpct, gjjQ:gjjQ, gjjM:gjjM, gjjBal:gjjBal, gjjR:gjjR, comR:comR, yrs:yrs,
+    agent:agent, deed:deed, extras:extras, down:down, cashNeed:cashNeed,
+    hsellNet:hsellNet, cashImm:cashImm, cashFull:cashFull, gapA:gapA, gapB:gapB,
+    cashSurplusA:cashSurplusA, cashSurplusB:cashSurplusB,
+    useSurplusA:useSurplusA, useSurplusB:useSurplusB,
+    keepGjjA:keepGjjA, keepGjjB:keepGjjB,
+    loanPriority:loanPriority, cashPriority:cashPriority,
+    src1Label:src1Label, src2Label:src2Label,
+    needLoanA:loansA.totalLoan, gjjLA:gjjLA, comLA:comLA, gjjPA:gjjPA, comPA:comPA, spA:spA,
+    comLA2:comLA2, gjjPA2:gjjPA2, comPA2:comPA2, spA2:spA2, sellCashAfterRepay:sellCashAfterRepay,
+    needLoanB:loansB.totalLoan, gjjLB:gjjLB, comLB:comLB, gjjPB:gjjPB, comPB:comPB, spB:spB,
+    savDown:savDown, parDown:parDown, savLoan:savLoan, parLoan:parLoan,
+
+    // ── Final cash balance: CORRECT accounting ──────────────────────────────
+    // Key: when useSurplus=true, the surplus cash is SPENT on extra down payment
+    //      (it reduces the loan but is no longer in your pocket)
+    //
+    // Scheme A:
+    //   Cash actually spent at purchase = cashNeed + (useSurplusA ? cashSurplusA : 0)
+    //   Cash left after purchase        = max(0, cashImm - total_spent)
+    //   Cash left after selling house   = sellCashAfterRepay
+    //   Final                           = cashAfterBuy + sellCashAfterRepay
+    finalCashA: (function(){
+      var spent = cashNeed + (useSurplusA ? cashSurplusA : 0);
+      var afterBuy = Math.max(0, cashImm - spent);
+      return afterBuy + Math.max(0, hsellNet - comLA);
+    })(),
+    // Scheme B:
+    //   Total available = cashFull (all cash + house sale)
+    //   Cash actually spent = cashNeed + surplus used for extra down
+    //   Surplus used for down = baseline_loan - actual_loan (what was removed from loan)
+    //   Final = max(0, cashFull - cashNeed - surplus_used_for_loan)
+    finalCashB: (function(){
+      var baselineLoan = hp - down;
+      var surplusUsed  = Math.max(0, baselineLoan - loansB.totalLoan);
+      return Math.max(0, cashFull - cashNeed - surplusUsed);
+    })()
+  };
 
   renderFunds();
   renderSchemes();
@@ -725,347 +998,766 @@ function calc() {
   renderDTI();
   renderInterest();
   renderStress();
+  updateHeader();
 }
 
-/* ═══ Render functions ═══ */
+function updateHeader() {
+  var s = S;
+  var hdrHp = document.getElementById('hdr-hp');
+  var hdrA  = document.getElementById('hdr-monthly-a');
+  var hdrB  = document.getElementById('hdr-monthly-b');
+  var hdrD  = document.getElementById('hdr-down');
+  if (hdrHp) hdrHp.textContent = f0(s.hp) + ' 万';
+  if (hdrA)  hdrA.textContent  = yuan(s.spA.total);
+  if (hdrB)  hdrB.textContent  = yuan(s.spB.total);
+  if (hdrD)  hdrD.textContent  = f1(s.cashNeed) + ' 万';
+}
 
+/* --- Render: Fund pool --- */
 function renderFunds() {
   var s = S;
+  var cashGap  = Math.max(0, s.cashNeed - s.cashImm);
+  var hasCashOk = cashGap <= 0;
+  var tipBg    = hasCashOk ? 'var(--accent-bg)' : 'var(--amber-bg)';
+  var tipClr   = hasCashOk ? 'var(--accent)' : 'var(--amber)';
+  var tipTxt   = hasCashOk
+    ? '\u2713 \u73b0\u6709\u73b0\u91d1\u53ef\u8986\u76d6\u9996\u4ed8\u53ca\u7a0e\u8d39'
+    : '\u26a0 \u73b0\u91d1\u7f3a\u53e3 ' + f2(cashGap) + ' \u4e07\uff0c\u9700\u57ab\u8d44\u6216\u7b49\u5f85\u5356\u623f';
+  var comClr   = s.comLA > 0 ? 'var(--amber)' : 'var(--tx3)';
+  var prioComBg = s.comLA > 0 ? 'var(--amber-bg)' : 'var(--surf3)';
+
+  // Priority order display
+  var loanLabel = {
+    gjj_first: '\u516c\u79ef\u91d1\u8d37\u6b3e\u4f18\u5148',
+    com_first: '\u5546\u4e1a\u8d37\u6b3e\u4f18\u5148',
+    equal: '\u5747\u7b49\u5206\u914d',
+    manual: '\u624b\u52a8\u8bbe\u5b9a\u516c\u79ef\u91d1\u6bd4\u4f8b'
+  }[s.loanPriority] || '';
+  var cashLabel = s.cashPriority === 'parents_first'
+    ? '\u7236\u6bcd\u652f\u6301\u4f18\u5148'
+    : '\u5b58\u6b3e\u73b0\u91d1\u4f18\u5148';
+
+  var prioBadge = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">'
+    + '<span style="font-size:10px;padding:2px 8px;border-radius:20px;background:var(--accent-bg);color:var(--accent-tx);font-weight:600">'
+    + '\u8d37\u6b3e: ' + loanLabel + '</span>'
+    + '<span style="font-size:10px;padding:2px 8px;border-radius:20px;background:var(--surf3);color:var(--tx2);font-weight:600">'
+    + '\u73b0\u91d1: ' + cashLabel + '</span>'
+    + '</div>';
+
+  // Loan allocation display
+  var prio = '<div style="margin-top:8px;padding:8px 10px;background:var(--surf2);border:1px solid var(--bd);border-radius:var(--rs)">'
+    + '<div style="font-weight:700;color:var(--accent);margin-bottom:6px;font-size:10px;letter-spacing:.5px;text-transform:uppercase">\u8d44\u91d1\u4f18\u5148\u987a\u5e8f\uff08\u65b9\u6848A\uff09</div>'
+    + prioBadge
+    + '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;margin-bottom:6px">'
+    // Loan side
+    + '<div style="padding:6px 8px;background:var(--accent-bg);border-radius:4px">'
+    + '<div style="font-size:9px;font-weight:700;color:var(--accent-tx);margin-bottom:3px">\u8d37\u6b3e\u4f18\u5148</div>'
+    + '<div style="font-size:10px;display:flex;justify-content:space-between"><span style="color:var(--tx2)">\u516c\u79ef\u91d1\u8d37\u6b3e</span><b style="color:var(--accent)">' + f0(s.gjjLA) + ' \u4e07 @ ' + (s.gjjR*100).toFixed(2) + '%</b></div>'
+    + '<div style="font-size:10px;display:flex;justify-content:space-between;margin-top:2px"><span style="color:var(--tx2)">\u5546\u4e1a\u8d37\u6b3e</span><b style="color:' + comClr + '">' + f0(s.comLA) + ' \u4e07 @ ' + (s.comR*100).toFixed(2) + '%</b></div>'
+    + '<div style="font-size:10px;display:flex;justify-content:space-between;margin-top:3px;border-top:1px solid var(--bd);padding-top:2px"><span style="font-weight:600">\u5408\u8ba1</span><b>' + f0(s.needLoanA) + ' \u4e07</b></div>'
+    + '</div>'
+    // Cash side
+    + '<div style="padding:6px 8px;background:var(--surf3);border-radius:4px">'
+    + '<div style="font-size:9px;font-weight:700;color:var(--tx2);margin-bottom:3px">\u73b0\u91d1\u4f18\u5148</div>'
+    + '<div style="font-size:10px;display:flex;justify-content:space-between"><span style="color:var(--tx2)">' + s.src1Label + '</span><b style="color:var(--accent)">' + f0(s.cashPriority==='parents_first'?s.parents:s.savings) + ' \u4e07</b></div>'
+    + '<div style="font-size:10px;display:flex;justify-content:space-between;margin-top:2px"><span style="color:var(--tx2)">' + s.src2Label + '</span><b style="color:var(--teal)">' + f0(s.cashPriority==='parents_first'?s.savings:s.parents) + ' \u4e07</b></div>'
+    + '<div style="font-size:10px;display:flex;justify-content:space-between;margin-top:3px;border-top:1px solid var(--bd);padding-top:2px"><span style="font-weight:600">\u5408\u8ba1</span><b>' + f0(s.cashImm) + ' \u4e07</b></div>'
+    + '</div>'
+    + '</div>'
+    + (s.cashSurplusA > 0
+      ? '<div style="font-size:10px;padding:5px 8px;border-radius:4px;background:' + (s.useSurplusA?'var(--accent-bg)':'var(--surf3)') + ';color:' + (s.useSurplusA?'var(--accent-tx)':'var(--tx2)') + '">'
+        + '\u73b0\u91d1\u5269\u4f59 ' + f2(s.cashSurplusA) + ' \u4e07 \u2192 '
+        + (s.useSurplusA
+            ? (s.keepGjjA
+                ? '\u51cf\u5c11\u5546\u8d37 ' + f2(Math.min(s.cashSurplusA, s.comLA)) + ' \u4e07\uff08\u516c\u79ef\u91d1\u8d37\u4fdd\u6301\u6ee1\u989d\uff09'
+                : '\u5df2\u589e\u52a0\u9996\u4ed8\uff0c\u5171\u51cf\u5c11\u8d37\u6b3e ' + f2(s.cashSurplusA) + ' \u4e07')
+            : '\u4fdd\u7559\u73b0\u91d1\uff0c\u672a\u7528\u4e8e\u8d37\u6b3e')
+        + '</div>'
+      : '')
+    + (s.hsellNet > 0
+      ? '<div style="margin-top:5px;padding:5px 8px;background:var(--teal-bg);border-radius:4px;font-size:10px">'
+        + '<span style="color:var(--teal-tx);font-weight:600">\u5356\u623f\u51c0\u5f97 ' + f0(s.hsellNet) + ' \u4e07\uff08\u5230\u4f4d\u540e\uff09</span>'
+        + '<span style="color:var(--teal)"> \u2192 \u4f18\u5148\u8fd8\u5546\u8d37\uff0c\u4f59 ' + f2(s.sellCashAfterRepay) + ' \u4e07</span>'
+        + '</div>'
+      : '')
+    + '<div style="margin-top:6px;padding:5px 8px;background:' + tipBg + ';border-radius:4px;font-size:10px">'
+    + '<span style="font-weight:700;color:' + tipClr + '">' + tipTxt + '</span>'
+    + '</div>'
+    + '</div>';
+
   document.getElementById('r-funds').innerHTML = [
-    { l:'存款现金',    v:s.savings,   sub:'立即可用',    c:'var(--accent)' },
-    { l:'父母支持',    v:s.parents,   sub:'立即可用',    c:'var(--teal)' },
-    { l:'待售房产净得',v:s.hsellNet,  sub:'市值'+f0(s.hsell)+(s.hdebt>0?' − 余贷'+f0(s.hdebt):'')+' 万', c:'var(--amber)' },
-    { l:'合计可用',    v:s.cashFull,  sub:'全部资产',    c:'#1A4A7A' },
-  ].map(function(d){
-    return '<div class="fcell"><div class="fcell-lbl">'+d.l+'</div>'
-      +'<div class="fcell-val" style="color:'+d.c+'">'+f0(d.v)+' 万</div>'
-      +'<div class="fcell-sub">'+d.sub+'</div></div>';
-  }).join('');
+    { l:'\u5b58\u6b3e\u73b0\u91d1',    v:s.savings,  sub:'\u7acb\u5373\u53ef\u7528', c:'var(--accent)' },
+    { l:'\u7236\u6bcd\u652f\u6301',    v:s.parents,  sub:'\u7acb\u5373\u53ef\u7528', c:'var(--teal)' },
+    { l:'\u5f85\u552e\u623f\u4ea7\u51c0\u5f97', v:s.hsellNet,
+      sub:'\u5e02\u503c' + f0(s.hsell) + (s.hdebt > 0 ? ' - \u4f59\u8d37' + f0(s.hdebt) : '') + '\u4e07',
+      c:'var(--amber)' },
+    { l:'\u5408\u8ba1\u53ef\u7528',    v:s.cashFull,
+      sub:'\u73b0\u91d1' + f0(s.cashImm) + ' + \u623f\u4ea7' + f0(s.hsellNet),
+      c:'#1A4A7A' },
+  ].map(function(d) {
+    return '<div class="fcell"><div class="fcell-lbl">' + d.l + '</div>'
+      + '<div class="fcell-val" style="color:' + d.c + '">' + f0(d.v) + ' \u4e07</div>'
+      + '<div class="fcell-sub">' + d.sub + '</div></div>';
+  }).join('') + prio;
 }
 
+/* --- pay block helper --- */
 function payBlockHtml(sp, income, gjjM, gjjBal) {
   var balNote = sp.usedBal > 0
-    ? '余额补贴 '+yuan(sp.usedBal)
-    : (gjjBal > 0 ? '余额未动用' : '无余额');
-  return '<div class="tot-line"><span class="tot-lbl">月供合计</span><span class="tot-val">'+yuan(sp.total)+'</span></div>'
-    +'<div class="pay-detail">'
-      +'<div class="pd-cell"><div class="pd-lbl">公积金月供</div><div class="pd-val" style="color:var(--accent)">'+yuan(sp.gjjPay)+'</div></div>'
-      +'<div class="pd-cell"><div class="pd-lbl">商贷月供</div><div class="pd-val" style="color:var(--amber)">'+yuan(sp.comPay)+'</div></div>'
-    +'</div>'
-    +'<div class="pay3">'
-      +'<div class="p3h gjj">'
-        +'<div class="p3-lbl">公积金月缴冲抵</div>'
-        +'<div class="p3-amt">'+yuan(sp.usedMonthly)+'</div>'
-        +'<div class="p3-sub">账户自动划转</div>'
-      +'</div>'
-      +'<div class="pay3-div"></div>'
-      +'<div class="p3h bal">'
-        +'<div class="p3-lbl">公积金余额补贴</div>'
-        +'<div class="p3-amt">'+yuan(sp.usedBal)+'</div>'
-        +'<div class="p3-sub">'+balNote+'</div>'
-      +'</div>'
-      +'<div class="pay3-div"></div>'
-      +'<div class="p3h cash">'
-        +'<div class="p3-lbl">现金实际支出</div>'
-        +'<div class="p3-amt">'+yuan(sp.cash)+'</div>'
-        +'<div class="p3-sub">占月收入 '+pct(sp.cash/Math.max(income,0.01))+'</div>'
-      +'</div>'
-    +'</div>';
+    ? '\u4f59\u989d\u8865\u8d34 ' + yuan(sp.usedBal)
+    : (gjjBal > 0 ? '\u4f59\u989d\u672a\u52a8\u7528' : '\u65e0\u4f59\u989d');
+  return '<div class="tot-line"><span class="tot-lbl">\u6708\u4f9b\u5408\u8ba1</span>'
+    + '<span class="tot-val">' + yuan(sp.total) + '</span></div>'
+    + '<div class="pay-detail">'
+    + '<div class="pd-cell"><div class="pd-lbl">\u516c\u79ef\u91d1\u6708\u4f9b</div>'
+    + '<div class="pd-val" style="color:var(--accent)">' + yuan(sp.gjjPay) + '</div></div>'
+    + '<div class="pd-cell"><div class="pd-lbl">\u5546\u8d37\u6708\u4f9b</div>'
+    + '<div class="pd-val" style="color:var(--amber)">' + yuan(sp.comPay) + '</div></div>'
+    + '</div>'
+    + '<div class="pay3">'
+    + '<div class="p3h gjj"><div class="p3-lbl">\u516c\u79ef\u91d1\u6708\u7f34\u51b2\u6297</div>'
+    + '<div class="p3-amt">' + yuan(sp.usedMonthly) + '</div>'
+    + '<div class="p3-sub">\u8d26\u6237\u81ea\u52a8\u5212\u8f6c</div></div>'
+    + '<div class="pay3-div"></div>'
+    + '<div class="p3h bal"><div class="p3-lbl">\u516c\u79ef\u91d1\u4f59\u989d\u8865\u8d34</div>'
+    + '<div class="p3-amt">' + yuan(sp.usedBal) + '</div>'
+    + '<div class="p3-sub">' + balNote + '</div></div>'
+    + '<div class="pay3-div"></div>'
+    + '<div class="p3h cash"><div class="p3-lbl">\u73b0\u91d1\u5b9e\u9645\u652f\u51fa</div>'
+    + '<div class="p3-amt">' + yuan(sp.cash) + '</div>'
+    + '<div class="p3-sub">\u5360\u6708\u6536\u5165 ' + pct(sp.cash / Math.max(income, 0.01)) + '</div></div>'
+    + '</div>';
 }
 
+/* --- Render: Schemes --- */
 function renderSchemes() {
   var s = S;
-  var tipA = s.gapA<=0
-    ? '<div class="tip ok">现有现金余 '+f0(-s.gapA)+' 万，无需垫资</div>'
-    : '<div class="tip warn">现金缺口 '+f0(s.gapA)+' 万</div>';
-  var tipB = s.gapB<=0
-    ? '<div class="tip ok">余量 '+f0(-s.gapB)+' 万已减少贷款</div>'
-    : '<div class="tip bad">即使卖房仍缺 '+f0(s.gapB)+' 万</div>';
+
+  // Scheme A final cash summary
+  var cashUsedA      = s.cashNeed + (s.useSurplusA ? s.cashSurplusA : 0);
+  var cashAfterBuyA  = Math.max(0, s.cashImm - cashUsedA);
+  var finalCashAClr  = s.finalCashA > 0 ? 'var(--accent)' : 'var(--red)';
+
+  // Build step-by-step formula rows
+  function stepRow(op, label, amt, color, sub) {
+    return '<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid var(--bd)">'
+      + '<span style="font-size:16px;font-weight:700;color:' + color + ';min-width:18px;text-align:center">' + op + '</span>'
+      + '<div style="flex:1">'
+      + '<div style="font-size:11px;color:var(--tx2)">' + label + '</div>'
+      + (sub ? '<div style="font-size:9px;color:var(--tx3);margin-top:1px">' + sub + '</div>' : '')
+      + '</div>'
+      + '<span style="font-size:13px;font-weight:700;font-family:var(--mono);color:' + color + '">' + amt + '</span>'
+      + '</div>';
+  }
+
+  var cashSummaryA =
+    '<div style="margin-top:12px;border-radius:var(--r);overflow:hidden;border:1px solid var(--bd2)">'
+    + '<div style="background:var(--accent);padding:8px 14px;font-size:10px;font-weight:700;color:#fff;letter-spacing:.5px;text-transform:uppercase">'
+    + '\u6700\u7ec8\u624b\u5934\u73b0\u91d1\u4f59\u989d\u00b7\u8ba1\u7b97\u8fc7\u7a0b</div>'
+    + '<div style="background:var(--surf);padding:0">'
+    // Step 1: starting cash
+    + stepRow('\u2460', '\u5b58\u6b3e + \u7236\u6bcd\u652f\u6301\uff08\u7acb\u5373\u53ef\u7528\u73b0\u91d1\uff09',
+        f2(s.cashImm) + ' \u4e07', 'var(--accent)', '')
+    // Step 2: down payment + fees
+    + stepRow('\u2212', '\u9996\u4ed8 + \u7a0e\u8d39\u652f\u51fa',
+        f2(s.cashNeed) + ' \u4e07', 'var(--amber)',
+        '\u9996\u4ed8' + f2(s.down) + '\u4e07 + \u9644\u52a0\u8d39' + f2(s.extras) + '\u4e07')
+    // Step 3: surplus used for extra down (only if useSurplusA)
+    + (s.useSurplusA && s.cashSurplusA > 0
+        ? stepRow('\u2212', '\u989d\u5916\u5145\u6b3e\u51b2\u6293\u5546\u8d37\uff08\u51cf\u5c11\u8d37\u6b3e\u989d\uff09',
+            f2(s.cashSurplusA) + ' \u4e07', 'var(--amber)',
+            '\u5546\u8d37\u4ece' + f2(s.comLA + s.cashSurplusA) + '\u4e07\u51cf\u81f3' + f2(s.comLA) + '\u4e07')
+        : '')
+    // Sub-total after purchase
+    + '<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--surf2);border-bottom:1px solid var(--bd)">'
+    + '<span style="font-size:12px;font-weight:700;color:var(--tx3);min-width:18px;text-align:center">=</span>'
+    + '<div style="flex:1;font-size:11px;color:var(--tx2)">\u4e70\u623f\u5b8c\u6210\u540e\u624b\u5934\u73b0\u91d1</div>'
+    + '<span style="font-size:13px;font-weight:700;font-family:var(--mono);color:var(--tx)">' + f2(cashAfterBuyA) + ' \u4e07</span>'
+    + '</div>'
+    // Step 4: sell house net after repaying loan
+    + (s.hsellNet > 0
+        ? stepRow('+', '\u5356\u623f\u51c0\u5f97 \u2192 \u8fd8\u5546\u8d37\u540e\u5269\u4f59',
+            f2(s.sellCashAfterRepay) + ' \u4e07', 'var(--teal)',
+            '\u5356\u623f' + f2(s.hsellNet) + '\u4e07 \u2212 \u5f52\u8fd8\u5546\u8d37' + f2(Math.min(s.comLA, s.hsellNet)) + '\u4e07')
+        : '')
+    // Final result
+    + '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--accent-bg);border-top:2px solid var(--accent)">'
+    + '<div>'
+    + '<div style="font-size:10px;font-weight:700;color:var(--accent-tx);margin-bottom:1px">\u2193 \u6240\u6709\u6d41\u7a0b\u5b8c\u6210\u540e</div>'
+    + '<div style="font-size:11px;color:var(--tx2)">\u624b\u5934\u73b0\u91d1\u603b\u4f59\u989d</div>'
+    + '</div>'
+    + '<span style="font-size:22px;font-weight:700;color:' + finalCashAClr + ';font-family:var(--mono)">' + f2(s.finalCashA) + ' \u4e07</span>'
+    + '</div>'
+    + '</div></div>';
+
+  // Scheme B final cash summary
+  var baselineLoanB    = s.hp - s.down;
+  var cashUsedForLoans = Math.max(0, baselineLoanB - s.needLoanB);
+  var finalCashBClr    = s.finalCashB > 0 ? 'var(--accent)' : 'var(--red)';
+
+  function stepRowB(op, label, amt, color, sub) {
+    return '<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid var(--bd)">'
+      + '<span style="font-size:16px;font-weight:700;color:' + color + ';min-width:18px;text-align:center">' + op + '</span>'
+      + '<div style="flex:1">'
+      + '<div style="font-size:11px;color:var(--tx2)">' + label + '</div>'
+      + (sub ? '<div style="font-size:9px;color:var(--tx3);margin-top:1px">' + sub + '</div>' : '')
+      + '</div>'
+      + '<span style="font-size:13px;font-weight:700;font-family:var(--mono);color:' + color + '">' + amt + '</span>'
+      + '</div>';
+  }
+
+  var cashSummaryB =
+    '<div style="margin-top:12px;border-radius:var(--r);overflow:hidden;border:1px solid var(--bd2)">'
+    + '<div style="background:var(--accent);padding:8px 14px;font-size:10px;font-weight:700;color:#fff;letter-spacing:.5px;text-transform:uppercase">'
+    + '\u6700\u7ec8\u624b\u5934\u73b0\u91d1\u4f59\u989d\u00b7\u8ba1\u7b97\u8fc7\u7a0b</div>'
+    + '<div style="background:var(--surf);padding:0">'
+    // Step 1: existing cash (savings + parents)
+    + stepRowB('\u2460', '\u5b58\u6b3e + \u7236\u6bcd\u652f\u6301\uff08\u7acb\u5373\u53ef\u7528\uff09',
+        f2(s.cashImm) + ' \u4e07', 'var(--accent)',
+        '\u5b58\u6b3e' + f2(s.savings) + '\u4e07 + \u7236\u6bcd' + f2(s.parents) + '\u4e07')
+    // Step 2: house sale proceeds
+    + (s.hsellNet > 0
+        ? stepRowB('+', '\u5356\u623f\u51c0\u5f97\uff08\u5378\u552e\u540e\u5230\u624b\uff09',
+            f2(s.hsellNet) + ' \u4e07', 'var(--teal)',
+            '\u5e02\u503c' + f2(s.hsell) + '\u4e07' + (s.hdebt > 0 ? ' \u2212 \u4f59\u8d37' + f2(s.hdebt) + '\u4e07' : ''))
+        : '')
+    // Sub-total available
+    + '<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--surf2);border-bottom:1px solid var(--bd)">'
+    + '<span style="font-size:12px;font-weight:700;color:var(--tx3);min-width:18px;text-align:center">=</span>'
+    + '<div style="flex:1;font-size:11px;color:var(--tx2)">\u5168\u90e8\u53ef\u7528\u8d44\u91d1</div>'
+    + '<span style="font-size:13px;font-weight:700;font-family:var(--mono);color:var(--tx)">' + f2(s.cashFull) + ' \u4e07</span>'
+    + '</div>'
+    // Step 3: down payment + fees
+    + stepRowB('\u2212', '\u9996\u4ed8 + \u7a0e\u8d39\u652f\u51fa',
+        f2(s.cashNeed) + ' \u4e07', 'var(--amber)',
+        '\u9996\u4ed8' + f2(s.down) + '\u4e07 + \u9644\u52a0\u8d39' + f2(s.extras) + '\u4e07')
+    // Step 4: surplus used to reduce loan (only if useSurplusB)
+    + (s.useSurplusB && cashUsedForLoans > 0
+        ? stepRowB('\u2212', '\u989d\u5916\u5145\u6b3e\u51b2\u6293\u8d37\u6b3e\uff08\u51cf\u5c11\u8d37\u6b3e\u989d\uff09',
+            f2(cashUsedForLoans) + ' \u4e07', 'var(--amber)',
+            '\u8d37\u6b3e\u4ece' + f2(baselineLoanB) + '\u4e07\u964d\u81f3' + f2(s.needLoanB) + '\u4e07\uff0c\u516c\u79ef\u91d1' + f2(s.gjjLB) + '\u4e07 + \u5546\u8d37' + f2(s.comLB) + '\u4e07')
+        : (!s.useSurplusB
+            ? '<div style="display:flex;align-items:center;gap:8px;padding:5px 10px;border-bottom:1px solid var(--bd)">'
+            + '<span style="font-size:12px;color:var(--tx3);min-width:18px;text-align:center">\u2015</span>'
+            + '<div style="flex:1;font-size:11px;color:var(--tx3)">\u5269\u4f59\u8d44\u91d1\u4fdd\u7559\u4e3a\u73b0\u91d1\uff0c\u4e0d\u5145\u4e3a\u9996\u4ed8</div>'
+            + '<span style="font-size:12px;color:var(--tx3)">0 \u4e07</span>'
+            + '</div>'
+            : ''))
+    // Final result
+    + '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--accent-bg);border-top:2px solid var(--accent)">'
+    + '<div>'
+    + '<div style="font-size:10px;font-weight:700;color:var(--accent-tx);margin-bottom:1px">\u2193 \u6240\u6709\u6d41\u7a0b\u5b8c\u6210\u540e</div>'
+    + '<div style="font-size:11px;color:var(--tx2)">\u624b\u5934\u73b0\u91d1\u603b\u4f59\u989d</div>'
+    + '</div>'
+    + '<span style="font-size:22px;font-weight:700;color:' + finalCashBClr + ';font-family:var(--mono)">' + f2(s.finalCashB) + ' \u4e07</span>'
+    + '</div>'
+    + '</div></div>';
+  var tipA = s.gapA <= 0
+    ? '<div class="tip ok">\u73b0\u6709\u73b0\u91d1\u4f59 ' + f0(-s.gapA) + ' \u4e07\uff0c\u65e0\u9700\u57ab\u8d44</div>'
+    : '<div class="tip warn">\u73b0\u91d1\u7f3a\u53e3 ' + f0(s.gapA) + ' \u4e07</div>';
+  var tipB = s.gapB <= 0
+    ? '<div class="tip ok">\u4f59\u91cf ' + f0(-s.gapB) + ' \u4e07</div>'
+    : '<div class="tip bad">\u5373\u4f7f\u5356\u623f\u4ecd\u7f3a ' + f0(s.gapB) + ' \u4e07</div>';
+
+  var sellInfo = '';
+  if (s.hsellNet > 0) {
+    var repaid   = Math.min(s.comLA, s.hsellNet);
+    var leftClr  = s.sellCashAfterRepay > 0 ? 'var(--accent)' : 'var(--tx3)';
+    sellInfo = '<div style="margin-top:8px;padding:8px 10px;background:var(--teal-bg);border-radius:var(--rs);font-size:11px">'
+      + '<div style="font-weight:700;color:var(--teal-tx);margin-bottom:4px">\u5356\u623f ' + f0(s.hsellNet) + ' \u4e07 \u2192 \u4f18\u5148\u8fd8\u5546\u8d37</div>'
+      + '<div style="display:flex;justify-content:space-between;color:var(--tx2);padding:2px 0">'
+      + '<span>\u5f52\u8fd8\u5546\u8d37</span><b style="color:var(--teal)">' + f2(repaid) + ' \u4e07</b></div>'
+      + '<div style="display:flex;justify-content:space-between;color:var(--tx2);padding:2px 0;border-top:1px solid rgba(15,123,108,.15);margin-top:2px">'
+      + '<span>\u8fd8\u6b3e\u540e\u5269\u4f59\u73b0\u91d1</span>'
+      + '<b style="color:' + leftClr + '">' + f2(s.sellCashAfterRepay) + ' \u4e07</b></div>'
+      + '</div>';
+  }
 
   var cardA = '<div class="sc">'
-    +'<div class="sc-hdr"><span class="sc-name">方案 A · 先买后卖</span></div>'
-    +'<div class="sc-body">'
-    +'<div class="phase-div"><span class="ptag bef">阶段一 · 买房时</span></div>'
-    +payBlockHtml(s.spA, s.income, s.gjjM, s.gjjBal)
-    +tipA
-    +'<div class="phase-div" style="margin-top:12px"><span class="ptag aft">阶段二 · 卖房后（'+f0(s.hsellNet)+'万还商贷）</span></div>'
-    +payBlockHtml(s.spA2, s.income, s.gjjM, s.gjjBal)
-    +'<div class="note">商贷剩余 '+f0(s.comLA2)+' 万，月供减少 '+yuan(s.spA.total-s.spA2.total)+'</div>'
-    +'</div></div>';
+    + '<div class="sc-hdr"><span class="sc-name">\u65b9\u6848 A \u00b7 \u5148\u4e70\u540e\u5356</span></div>'
+    + '<div class="sc-body">'
+    + '<div class="phase-div"><span class="ptag bef">\u9636\u6bb5\u4e00 \u00b7 \u4e70\u623f\u65f6</span></div>'
+    + payBlockHtml(s.spA, s.income, s.gjjM, s.gjjBal)
+    + tipA
+    + '<div class="phase-div" style="margin-top:12px"><span class="ptag aft">'
+    + '\u9636\u6bb5\u4e8c \u00b7 \u5356\u623f\u540e\uff08' + f0(s.hsellNet) + '\u4e07\u8fd8\u5546\u8d37\uff09</span></div>'
+    + payBlockHtml(s.spA2, s.income, s.gjjM, s.gjjBal)
+    + sellInfo
+    + '<div class="note">\u5546\u8d37\u5269\u4f59 ' + f0(s.comLA2) + ' \u4e07\uff0c\u6708\u4f9b\u51cf\u5c11 ' + yuan(s.spA.total - s.spA2.total) + '</div>'
+    + cashSummaryA
+    + '</div></div>';
 
   var cardB = '<div class="sc rec">'
-    +'<div class="sc-hdr"><span class="sc-name">方案 B · 先卖后买</span><span class="rec-badge">推荐</span></div>'
-    +'<div class="sc-body">'
-    +'<div class="phase-div"><span class="ptag aft">买房起始即享低月供</span></div>'
-    +payBlockHtml(s.spB, s.income, s.gjjM, s.gjjBal)
-    +tipB
-    +'</div></div>';
+    + '<div class="sc-hdr"><span class="sc-name">\u65b9\u6848 B \u00b7 \u5148\u5356\u540e\u4e70</span>'
+    + '<span class="rec-badge">\u63a8\u8350</span></div>'
+    + '<div class="sc-body">'
+    + '<div class="phase-div"><span class="ptag aft">\u4e70\u623f\u8d77\u59cb\u5373\u4eab\u4f4e\u6708\u4f9b</span></div>'
+    + payBlockHtml(s.spB, s.income, s.gjjM, s.gjjBal)
+    + tipB
+    + cashSummaryB
+    + '</div></div>';
 
   document.getElementById('r-schemes').innerHTML = cardA + cardB;
-
-  // GJJ balance info if balance > 0
-  if(s.gjjBal > 0) {
-    var monthsCanCover = s.spA.usedMonthly < s.spA.gjjPay
-      ? (s.gjjBal / Math.max(s.spA.gjjPay - s.spA.usedMonthly, 0.0001)).toFixed(0)
-      : '∞';
-    var balInfo = '<div class="gjj-balance-info" style="margin-top:12px">'
-      +'<div class="title">公积金余额抵扣说明</div>'
-      +'<div class="row"><span>当前余额</span><b>'+f2(s.gjjBal)+' 万</b></div>'
-      +'<div class="row"><span>月缴 '+yuan(s.gjjM)+'，月供 '+yuan(s.spA.gjjPay)+'，缺口</span><b>'+yuan(Math.max(0,s.spA.gjjPay-s.gjjM))+'</b></div>'
-      +'<div class="row"><span>余额可补贴月数（方案A买房时）</span><b>'+monthsCanCover+' 个月</b></div>'
-      +'</div>';
-    document.getElementById('r-schemes').innerHTML += balInfo;
-  }
 }
 
+/* --- Render: Detail --- */
 function renderDetail() {
   var s = S;
-  var t1 = '<div><div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--accent);margin-bottom:8px">贷款拆分</div>'
-    +'<table class="dt"><thead><tr><th></th><th>方案 A</th><th>方案 B</th></tr></thead><tbody>'
-    +'<tr><td style="color:var(--tx2)">总需贷款</td><td>'+f0(s.needLoanA)+' 万</td><td>'+f0(s.needLoanB)+' 万</td></tr>'
-    +'<tr><td class="ca">公积金贷款</td><td>'+f0(s.gjjLA)+' 万</td><td>'+f0(s.gjjLB)+' 万</td></tr>'
-    +'<tr><td class="cam">商业贷款</td><td>'+f0(s.comLA)+' 万</td><td>'+f0(s.comLB)+' 万</td></tr>'
-    +'<tr><td>合计 ✓</td><td>'+f0(s.gjjLA+s.comLA)+' 万</td><td>'+f0(s.gjjLB+s.comLB)+' 万</td></tr>'
-    +'</tbody></table></div>';
+  var comPA2 = mpmt(s.comLA2, s.comR, s.yrs);
 
-  var t2 = '<div><div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--accent);margin-bottom:8px">月供对比（'+s.yrs+' 年等额）</div>'
-    +'<table class="dt"><thead><tr><th></th>'
-    +'<th style="color:var(--accent)">A 买房时</th>'
-    +'<th style="color:var(--teal)">A 卖房后</th>'
-    +'<th style="color:#1A4A7A">方案 B</th>'
-    +'</tr></thead><tbody>'
-    +'<tr><td class="ca">公积金月供</td><td>'+yuan(s.gjjPA)+'</td><td>'+yuan(s.gjjPA2)+'</td><td>'+yuan(s.gjjPB)+'</td></tr>'
-    +'<tr><td class="cam">商贷月供</td><td>'+yuan(s.comPA)+'</td><td>'+yuan(s.comPA2)+'</td><td>'+yuan(s.comPB)+'</td></tr>'
-    +'<tr><td>月供合计</td><td>'+yuan(s.spA.total)+'</td><td>'+yuan(s.spA2.total)+'</td><td>'+yuan(s.spB.total)+'</td></tr>'
-    +'<tr><td class="ca">公积金月缴冲抵</td><td class="ca">−'+yuan(s.spA.usedMonthly)+'</td><td class="ca">−'+yuan(s.spA2.usedMonthly)+'</td><td class="ca">−'+yuan(s.spB.usedMonthly)+'</td></tr>'
-    +'<tr><td class="ct">余额补贴</td><td class="ct">−'+yuan(s.spA.usedBal)+'</td><td class="ct">−'+yuan(s.spA2.usedBal)+'</td><td class="ct">−'+yuan(s.spB.usedBal)+'</td></tr>'
-    +'<tr><td class="cam">现金实付</td><td class="cam">'+yuan(s.spA.cash)+'</td><td style="color:var(--teal)">'+yuan(s.spA2.cash)+'</td><td style="color:#1A4A7A">'+yuan(s.spB.cash)+'</td></tr>'
-    +'</tbody></table></div>';
+  var t1 = '<div><div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--accent);margin-bottom:8px">\u8d37\u6b3e\u62c6\u5206</div>'
+    + '<table class="dt"><thead><tr><th></th><th>\u65b9\u6848 A</th><th>\u65b9\u6848 B</th></tr></thead><tbody>'
+    + '<tr><td style="color:var(--tx2)">\u603b\u9700\u8d37\u6b3e</td><td>' + f0(s.needLoanA) + ' \u4e07</td><td>' + f0(s.needLoanB) + ' \u4e07</td></tr>'
+    + '<tr><td class="ca">\u516c\u79ef\u91d1\u8d37\u6b3e</td><td>' + f0(s.gjjLA) + ' \u4e07</td><td>' + f0(s.gjjLB) + ' \u4e07</td></tr>'
+    + '<tr><td class="cam">\u5546\u4e1a\u8d37\u6b3e</td><td>' + f0(s.comLA) + ' \u4e07</td><td>' + f0(s.comLB) + ' \u4e07</td></tr>'
+    + '<tr><td>\u5408\u8ba1</td><td>' + f0(s.gjjLA + s.comLA) + ' \u4e07</td><td>' + f0(s.gjjLB + s.comLB) + ' \u4e07</td></tr>'
+    + '</tbody></table></div>';
+
+  var t2 = '<div style="background:var(--surf2);border-radius:var(--rs);padding:12px 14px;border:1px solid var(--bd)"><div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--accent);margin-bottom:10px;text-transform:uppercase">'
+    + '\u6708\u4f9b\u5bf9\u6bd4\uff08' + s.yrs + ' \u5e74\u7b49\u989d\uff09</div>'
+    + '<table class="dt"><thead><tr><th></th>'
+    + '<th style="color:var(--accent)">A \u4e70\u623f\u65f6</th>'
+    + '<th style="color:var(--teal)">A \u5356\u623f\u540e</th>'
+    + '<th style="color:#1A4A7A">\u65b9\u6848 B</th>'
+    + '</tr></thead><tbody>'
+    + '<tr><td class="ca">\u516c\u79ef\u91d1\u6708\u4f9b</td><td>' + yuan(s.gjjPA) + '</td><td>' + yuan(s.gjjPA2) + '</td><td>' + yuan(s.gjjPB) + '</td></tr>'
+    + '<tr><td class="cam">\u5546\u8d37\u6708\u4f9b</td><td>' + yuan(s.comPA) + '</td><td>' + yuan(comPA2) + '</td><td>' + yuan(s.comPB) + '</td></tr>'
+    + '<tr><td>\u6708\u4f9b\u5408\u8ba1</td><td>' + yuan(s.spA.total) + '</td><td>' + yuan(s.spA2.total) + '</td><td>' + yuan(s.spB.total) + '</td></tr>'
+    + '<tr><td class="ca">\u516c\u79ef\u91d1\u6708\u7f34\u51b2\u6297</td>'
+    + '<td class="ca">-' + yuan(s.spA.usedMonthly) + '</td>'
+    + '<td class="ca">-' + yuan(s.spA2.usedMonthly) + '</td>'
+    + '<td class="ca">-' + yuan(s.spB.usedMonthly) + '</td></tr>'
+    + '<tr><td class="ct">\u4f59\u989d\u8865\u8d34</td>'
+    + '<td class="ct">-' + yuan(s.spA.usedBal) + '</td>'
+    + '<td class="ct">-' + yuan(s.spA2.usedBal) + '</td>'
+    + '<td class="ct">-' + yuan(s.spB.usedBal) + '</td></tr>'
+    + '<tr><td class="cam">\u73b0\u91d1\u5b9e\u4ed8</td>'
+    + '<td class="cam">' + yuan(s.spA.cash) + '</td>'
+    + '<td style="color:var(--teal)">' + yuan(s.spA2.cash) + '</td>'
+    + '<td style="color:#1A4A7A">' + yuan(s.spB.cash) + '</td></tr>'
+    + '</tbody></table></div>';
 
   document.getElementById('r-detail').innerHTML = t1 + t2;
 }
 
+/* --- Render: DTI --- */
 function renderDTI() {
-  var s = S;
-  var dA=s.spA.total/Math.max(s.income,0.01), dA2=s.spA2.total/Math.max(s.income,0.01), dB=s.spB.total/Math.max(s.income,0.01);
-  var dAn=s.spA.cash/Math.max(s.income,0.01), dA2n=s.spA2.cash/Math.max(s.income,0.01), dBn=s.spB.cash/Math.max(s.income,0.01);
-
-  function bar(d){
-    return '<div class="dti-bar"><div class="dti-fill" style="width:'+Math.min(100,d*100).toFixed(1)+'%;background:'+dc(d)+'"></div></div>';
+  var s   = S;
+  var inc = Math.max(s.income, 0.01);
+  var dA  = s.spA.total  / inc, dA2 = s.spA2.total / inc, dB = s.spB.total / inc;
+  var dAn = s.spA.cash   / inc, dA2n= s.spA2.cash  / inc, dBn= s.spB.cash  / inc;
+  function bar(d) {
+    return '<div class="dti-bar"><div class="dti-fill" style="width:'
+      + Math.min(100, d * 100).toFixed(1) + '%;background:' + dc(d) + '"></div></div>';
   }
   var left = '<div>'
-    +'<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--accent);margin-bottom:10px">全额 DTI（月供 ÷ 月收入）</div>'
-    +'<div class="dti-row"><span class="dti-lbl" style="color:var(--accent)">方案 A · 买房时</span><span class="dti-val" style="color:'+dc(dA)+'">'+pct(dA)+'</span></div>'+bar(dA)
-    +'<div class="dti-row"><span class="dti-lbl" style="color:var(--teal)">方案 A · 卖房后</span><span class="dti-val" style="color:'+dc(dA2)+'">'+pct(dA2)+'</span></div>'+bar(dA2)
-    +'<div class="dti-row"><span class="dti-lbl" style="color:#1A4A7A">方案 B</span><span class="dti-val" style="color:'+dc(dB)+'">'+pct(dB)+'</span></div>'+bar(dB)
-    +'<div class="dti-scale"><span>0%</span><span style="color:var(--accent)">安全 40%</span><span style="color:var(--amber)">警戒 55%</span><span>100%</span></div>'
-    +'</div>';
+    + '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--accent);margin-bottom:10px">\u5168\u989d DTI</div>'
+    + '<div class="dti-row"><span class="dti-lbl" style="color:var(--accent)">A \u00b7 \u4e70\u623f\u65f6</span>'
+    + '<span class="dti-val" style="color:' + dc(dA) + '">' + pct(dA) + '</span></div>' + bar(dA)
+    + '<div class="dti-row"><span class="dti-lbl" style="color:var(--teal)">A \u00b7 \u5356\u623f\u540e</span>'
+    + '<span class="dti-val" style="color:' + dc(dA2) + '">' + pct(dA2) + '</span></div>' + bar(dA2)
+    + '<div class="dti-row"><span class="dti-lbl" style="color:#1A4A7A">\u65b9\u6848 B</span>'
+    + '<span class="dti-val" style="color:' + dc(dB) + '">' + pct(dB) + '</span></div>' + bar(dB)
+    + '<div class="dti-scale"><span>0%</span><span style="color:var(--accent)">\u5b89\u5168 40%</span>'
+    + '<span style="color:var(--amber)">\u8b66\u621a 55%</span><span>100%</span></div></div>';
+
+  function dspClr(v) { return v >= 1 ? 'var(--accent)' : 'var(--red)'; }
+  var odRow = s.odebt > 0
+    ? '<tr><td class="cam">\u5176\u4ed6\u8d1f\u503a</td><td class="cam">-' + f1(s.odebt) + '\u4e07</td>'
+    + '<td class="cam">-' + f1(s.odebt) + '\u4e07</td><td class="cam">-' + f1(s.odebt) + '\u4e07</td></tr>' : '';
 
   var right = '<div>'
-    +'<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--accent);margin-bottom:10px">收入月度分配</div>'
-    +'<table class="dt"><thead><tr><th></th>'
-    +'<th style="color:var(--accent)">A 买房时</th><th style="color:var(--teal)">A 卖房后</th><th style="color:#1A4A7A">方案 B</th>'
-    +'</tr></thead><tbody>'
-    +'<tr><td style="color:var(--tx2)">家庭月收入</td><td>'+f1(s.income)+' 万</td><td>'+f1(s.income)+' 万</td><td>'+f1(s.income)+' 万</td></tr>'
-    +'<tr><td class="ca">公积金冲抵</td><td class="ca">−'+yuan(s.spA.off)+'</td><td class="ca">−'+yuan(s.spA2.off)+'</td><td class="ca">−'+yuan(s.spB.off)+'</td></tr>'
-    +'<tr><td class="cam">现金还款</td><td class="cam">−'+yuan(s.spA.cash)+'</td><td style="color:var(--teal)">−'+yuan(s.spA2.cash)+'</td><td style="color:#1A4A7A">−'+yuan(s.spB.cash)+'</td></tr>'
-    +(s.odebt>0?'<tr><td class="cam">其他负债</td><td class="cam">−'+f1(s.odebt)+' 万</td><td class="cam">−'+f1(s.odebt)+' 万</td><td class="cam">−'+f1(s.odebt)+' 万</td></tr>':'')
-    +'<tr><td>现金可支配</td>'
-    +'<td style="color:'+(s.income-s.spA.cash-s.odebt>=1?'var(--accent)':'var(--red)')+'">' +f2(s.income-s.spA.cash-s.odebt)+' 万</td>'
-    +'<td style="color:'+(s.income-s.spA2.cash-s.odebt>=1?'var(--accent)':'var(--red)')+'">'+f2(s.income-s.spA2.cash-s.odebt)+' 万</td>'
-    +'<td style="color:'+(s.income-s.spB.cash-s.odebt>=1?'var(--accent)':'var(--red)')+'"> '+f2(s.income-s.spB.cash-s.odebt)+' 万</td>'
-    +'</tr>'
-    +'<tr><td style="color:var(--tx2)">净 DTI</td>'
-    +'<td style="color:'+dc(dAn)+'">'+pct(dAn)+'</td>'
-    +'<td style="color:'+dc(dA2n)+'">'+pct(dA2n)+'</td>'
-    +'<td style="color:'+dc(dBn)+'">'+pct(dBn)+'</td>'
-    +'</tr></tbody></table></div>';
+    + '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--accent);margin-bottom:10px">\u6536\u5165\u6708\u5ea6\u5206\u914d</div>'
+    + '<table class="dt"><thead><tr><th></th>'
+    + '<th style="color:var(--accent)">A \u4e70\u623f\u65f6</th>'
+    + '<th style="color:var(--teal)">A \u5356\u623f\u540e</th>'
+    + '<th style="color:#1A4A7A">\u65b9\u6848 B</th>'
+    + '</tr></thead><tbody>'
+    + '<tr><td style="color:var(--tx2)">\u5bb6\u5ead\u6708\u6536\u5165</td><td>' + f1(s.income) + '\u4e07</td><td>' + f1(s.income) + '\u4e07</td><td>' + f1(s.income) + '\u4e07</td></tr>'
+    + '<tr><td class="ca">\u516c\u79ef\u91d1\u51b2\u6297</td>'
+    + '<td class="ca">-' + yuan(s.spA.off) + '</td><td class="ca">-' + yuan(s.spA2.off) + '</td><td class="ca">-' + yuan(s.spB.off) + '</td></tr>'
+    + '<tr><td class="cam">\u73b0\u91d1\u8fd8\u6b3e</td>'
+    + '<td class="cam">-' + yuan(s.spA.cash) + '</td>'
+    + '<td style="color:var(--teal)">-' + yuan(s.spA2.cash) + '</td>'
+    + '<td style="color:#1A4A7A">-' + yuan(s.spB.cash) + '</td></tr>'
+    + odRow
+    + '<tr><td>\u73b0\u91d1\u53ef\u652f\u914d</td>'
+    + '<td style="color:' + dspClr(s.income-s.spA.cash-s.odebt) + '">' + f2(s.income-s.spA.cash-s.odebt) + '\u4e07</td>'
+    + '<td style="color:' + dspClr(s.income-s.spA2.cash-s.odebt) + '">' + f2(s.income-s.spA2.cash-s.odebt) + '\u4e07</td>'
+    + '<td style="color:' + dspClr(s.income-s.spB.cash-s.odebt) + '">' + f2(s.income-s.spB.cash-s.odebt) + '\u4e07</td>'
+    + '</tr>'
+    + '<tr><td style="color:var(--tx2)">\u51c0 DTI</td>'
+    + '<td style="color:' + dc(dAn) + '">' + pct(dAn) + '</td>'
+    + '<td style="color:' + dc(dA2n) + '">' + pct(dA2n) + '</td>'
+    + '<td style="color:' + dc(dBn) + '">' + pct(dBn) + '</td>'
+    + '</tr></tbody></table></div>';
 
   document.getElementById('r-dti').innerHTML = left + right;
 }
 
+/* --- Render: Interest --- */
 function renderInterest() {
   var s = S;
-  var n = s.yrs*12, sm = 12;
-  var gjjIA = (mpmtM(s.gjjLA,s.gjjR,n)*n) - s.gjjLA;
-  var cp12  = mpmtM(s.comLA,s.comR,n);
-  var cb12  = remBal(s.comLA,s.comR,n,sm);
-  var cAft  = Math.max(0, cb12-s.hsellNet);
-  var rm2   = n-sm;
-  var cp2   = mpmtM(cAft,s.comR,rm2);
-  var comIA = Math.max(0, (cp12*sm)+s.hsellNet+(cp2*rm2)-s.comLA);
-  var totIA = gjjIA+comIA, totPA = s.gjjLA+s.comLA+totIA;
-  var gjjIB = (mpmtM(s.gjjLB,s.gjjR,n)*n)-s.gjjLB;
-  var comIB = (mpmtM(s.comLB,s.comR,n)*n)-s.comLB;
-  var totIB = gjjIB+comIB, totPB = s.gjjLB+s.comLB+totIB;
-  var saving = totIA-totIB;
-  var maxI = Math.max(totIA,totIB,0.01);
+  var n = s.yrs * 12, sm = 12;
+
+  var gjjIA = (mpmtM(s.gjjLA, s.gjjR, n) * n) - s.gjjLA;
+  var cp12  = mpmtM(s.comLA, s.comR, n);
+  var cb12  = remBal(s.comLA, s.comR, n, sm);
+  var actualRepayA = Math.min(s.hsellNet, cb12);
+  var cAft  = Math.max(0, cb12 - s.hsellNet);
+  var cp2   = mpmtM(cAft, s.comR, n - sm);
+  var comIA = Math.max(0, (cp12 * sm) + actualRepayA + (cp2 * (n - sm)) - s.comLA);
+  var totIA = gjjIA + comIA;
+  var totPA = s.gjjLA + s.comLA + totIA;
+
+  var gjjIB = (mpmtM(s.gjjLB, s.gjjR, n) * n) - s.gjjLB;
+  var comIB = (mpmtM(s.comLB, s.comR, n) * n) - s.comLB;
+  var totIB = gjjIB + comIB;
+  var totPB = s.gjjLB + s.comLB + totIB;
+  var saving  = totIA - totIB;
+  var gjjDiff = gjjIA - gjjIB;
+  var comDiff = comIA - comIB;
+  var maxI    = Math.max(totIA, totIB, 0.01);
 
   var rows = [
-    {l:'公积金贷款利息',a:gjjIA,b:gjjIB},
-    {l:'商业贷款利息',  a:comIA,b:comIB},
-    {l:'总利息',        a:totIA,b:totIB},
-    {l:'本金',          a:s.needLoanA,b:s.needLoanB},
-    {l:'本息合计',      a:totPA,b:totPB},
+    { l:'\u516c\u79ef\u91d1\u5229\u606f', a:gjjIA, b:gjjIB,
+      note:'A\u8d37' + f0(s.gjjLA) + '\u4e07 / B\u8d37' + f0(s.gjjLB) + '\u4e07' },
+    { l:'\u5546\u8d37\u5229\u606f',       a:comIA, b:comIB,
+      note:'A\u5546\u8d3712\u671f\u5229\u606f\uff0c\u5356\u623f\u540e\u6e05\u96f6' },
+    { l:'\u603b\u5229\u606f',             a:totIA, b:totIB, note:'' },
+    { l:'\u672c\u91d1',                   a:s.needLoanA, b:s.needLoanB, note:'' },
+    { l:'\u672c\u606f\u5408\u8ba1',       a:totPA, b:totPB, note:'' },
   ];
-  var trows = rows.map(function(r){
-    var bold = (r.l==='总利息'||r.l==='本息合计');
-    return '<tr><td style="'+(bold?'font-weight:600':'color:var(--tx2)')+'">'+r.l+'</td>'
-      +'<td style="'+(bold?'color:var(--accent)':'')+'">'+f2(r.a)+' 万</td>'
-      +'<td style="'+(bold?'color:var(--teal)':'')+'">'+f2(r.b)+' 万</td></tr>';
+  var trows = rows.map(function(r) {
+    var bold = r.l === '\u603b\u5229\u606f' || r.l === '\u672c\u606f\u5408\u8ba1';
+    return '<tr><td style="' + (bold ? 'font-weight:600' : 'color:var(--tx2)') + '">'
+      + r.l + (r.note ? '<div style="font-size:9px;color:var(--tx3)">' + r.note + '</div>' : '')
+      + '</td>'
+      + '<td style="' + (bold ? 'color:var(--accent)' : '') + '">' + f2(r.a) + ' \u4e07</td>'
+      + '<td style="' + (bold ? 'color:var(--teal)' : '') + '">' + f2(r.b) + ' \u4e07</td></tr>';
   }).join('');
 
-  var tbl = '<table class="dt" style="margin-bottom:14px"><thead><tr><th></th>'
-    +'<th style="color:var(--accent)">方案 A（含提前还贷）</th>'
-    +'<th style="color:var(--teal)">方案 B</th>'
-    +'</tr></thead><tbody>'+trows+'</tbody></table>';
+  var tbl = '<table class="dt" style="margin-bottom:12px"><thead><tr><th></th>'
+    + '<th style="color:var(--accent)">\u65b9\u6848 A</th>'
+    + '<th style="color:var(--teal)">\u65b9\u6848 B</th>'
+    + '</tr></thead><tbody>' + trows + '</tbody></table>';
 
-  var bars = '<div style="font-size:9px;color:var(--tx3);margin-bottom:8px;letter-spacing:.5px;text-transform:uppercase">总利息可视化</div>'
-    +'<div class="ibar-row"><span class="ibar-lbl">方案 A</span><div class="ibar-bg"><div class="ibar-fg" style="width:'+(totIA/maxI*100).toFixed(1)+'%;background:var(--accent)"></div></div><span class="ibar-val" style="color:var(--accent)">'+f2(totIA)+' 万</span></div>'
-    +'<div class="ibar-row"><span class="ibar-lbl">方案 B</span><div class="ibar-bg"><div class="ibar-fg" style="width:'+(totIB/maxI*100).toFixed(1)+'%;background:var(--teal)"></div></div><span class="ibar-val" style="color:var(--teal)">'+f2(totIB)+' 万</span></div>';
+  var diffBox = '<div style="margin-bottom:12px;padding:9px 11px;background:var(--surf2);border:1px solid var(--bd);border-radius:var(--rs);font-size:11px">'
+    + '<div style="font-weight:700;color:var(--accent);margin-bottom:6px;font-size:10px;text-transform:uppercase">\u5229\u606f\u5dee\u5f02\u5206\u89e3 (A - B)</div>'
+    + '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--bd)">'
+    + '<span style="color:var(--tx2)">\u516c\u79ef\u91d1\u5229\u606f\u5dee\uff08A\u8d37' + f0(s.gjjLA) + '\u4e07 vs B\u8d37' + f0(s.gjjLB) + '\u4e07\uff09</span>'
+    + '<span style="color:var(--amber);font-weight:600">+' + f2(gjjDiff) + ' \u4e07</span></div>'
+    + '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--bd)">'
+    + '<span style="color:var(--tx2)">\u5546\u8d37\u5229\u606f\uff08A\u5546\u8d3712\u671f\uff09</span>'
+    + '<span style="color:var(--amber);font-weight:600">+' + f2(comDiff) + ' \u4e07</span></div>'
+    + '<div style="display:flex;justify-content:space-between;padding:3px 0;font-weight:700">'
+    + '<span>\u5229\u606f\u5dee\u5408\u8ba1</span>'
+    + '<span style="color:' + (saving >= 0 ? 'var(--amber)' : 'var(--teal)') + '">' + (saving >= 0 ? '+' : '') + f2(saving) + ' \u4e07</span></div>'
+    + '</div>';
 
-  var sbox = saving>0
-    ? '<div class="saving-box"><div><div class="saving-lbl">选择方案 B 节省总利息</div><div class="saving-val">'+f2(saving)+' 万</div><div class="saving-note">约 '+Math.round(saving*10000).toLocaleString()+' 元</div></div>'
-      +'<div style="text-align:right"><div class="saving-plbl">节省比例</div><div class="saving-pct">'+(saving/totIA*100).toFixed(1)+'%</div></div></div>'
-    : (saving<0?'<div class="saving-box" style="background:var(--warn-bg)"><div><div class="saving-lbl" style="color:var(--warn)">方案 A 利息更少</div><div class="saving-val" style="color:var(--amber)">'+f2(-saving)+' 万</div></div></div>':'');
+  var bars = '<div style="font-size:9px;color:var(--tx3);margin-bottom:6px;text-transform:uppercase">\u603b\u5229\u606f\u5bf9\u6bd4</div>'
+    + '<div class="ibar-row"><span class="ibar-lbl">\u65b9\u6848 A</span>'
+    + '<div class="ibar-bg"><div class="ibar-fg" style="width:' + (totIA/maxI*100).toFixed(1) + '%;background:var(--accent)"></div></div>'
+    + '<span class="ibar-val" style="color:var(--accent)">' + f2(totIA) + ' \u4e07</span></div>'
+    + '<div class="ibar-row"><span class="ibar-lbl">\u65b9\u6848 B</span>'
+    + '<div class="ibar-bg"><div class="ibar-fg" style="width:' + (totIB/maxI*100).toFixed(1) + '%;background:var(--teal)"></div></div>'
+    + '<span class="ibar-val" style="color:var(--teal)">' + f2(totIB) + ' \u4e07</span></div>';
 
-  document.getElementById('r-interest').innerHTML = tbl+bars+sbox
-    +'<div style="font-size:9px;color:var(--tx3);margin-top:10px">方案A口径：约第1年卖房提前还商贷 '+f0(s.hsellNet)+' 万后继续还清余额。</div>';
+  var sbox = saving > 0
+    ? '<div class="saving-box"><div><div class="saving-lbl">\u9009\u62e9\u65b9\u6848 B \u8282\u7701</div>'
+    + '<div class="saving-val">' + f2(saving) + ' \u4e07</div>'
+    + '<div class="saving-note">\u7ea6 ' + Math.round(saving*10000).toLocaleString() + ' \u5143</div></div>'
+    + '<div style="text-align:right"><div class="saving-plbl">\u8282\u7701\u6bd4</div>'
+    + '<div class="saving-pct">' + (saving/totIA*100).toFixed(1) + '%</div></div></div>'
+    : (saving < 0
+      ? '<div class="saving-box" style="background:var(--warn-bg)"><div>'
+      + '<div class="saving-lbl" style="color:var(--warn)">\u65b9\u6848 A \u5229\u606f\u66f4\u5c11</div>'
+      + '<div class="saving-val" style="color:var(--amber)">' + f2(-saving) + ' \u4e07</div></div></div>'
+      : '');
+
+  document.getElementById('r-interest').innerHTML = tbl + diffBox + bars + sbox;
 }
 
+/* --- Render: Stress --- */
 function renderStress() {
   var s = S;
   var gL = s.gjjLA, cL = s.comLA;
-  if(SM==='a2'){ gL=s.gjjLA; cL=s.comLA2; }
-  else if(SM==='b'){ gL=s.gjjLB; cL=s.comLB; }
+  if (SM === 'a2') { cL = s.comLA2; }
+  else if (SM === 'b') { gL = s.gjjLB; cL = s.comLB; }
 
   var scns = [
-    {n:'基准',          ic:0,    rc:0   },
-    {n:'收入 −10%',     ic:-.1,  rc:0   },
-    {n:'收入 −20%',     ic:-.2,  rc:0   },
-    {n:'利率 +1%',      ic:0,    rc:.01 },
-    {n:'利率 +2%',      ic:0,    rc:.02 },
-    {n:'收入−15% & 利率+1%', ic:-.15, rc:.01},
+    { n:'\u57fa\u51c6',                        ic:0,    rc:0   },
+    { n:'\u6536\u5165 -10%',                   ic:-.1,  rc:0   },
+    { n:'\u6536\u5165 -20%',                   ic:-.2,  rc:0   },
+    { n:'\u5229\u7387 +1%',                    ic:0,    rc:.01 },
+    { n:'\u5229\u7387 +2%',                    ic:0,    rc:.02 },
+    { n:'\u6536\u5165-15% & \u5229\u7387+1%',  ic:-.15, rc:.01 },
   ];
-  document.getElementById('r-stress').innerHTML = scns.map(function(sc){
-    var inc = s.income*(1+sc.ic);
-    var gp  = mpmt(gL, s.gjjR+sc.rc, s.yrs);
-    var cp  = mpmt(cL, s.comR+sc.rc, s.yrs);
+  document.getElementById('r-stress').innerHTML = scns.map(function(sc) {
+    var inc = s.income * (1 + sc.ic);
+    var gp  = mpmt(gL, s.gjjR + sc.rc, s.yrs);
+    var cp  = mpmt(cL, s.comR + sc.rc, s.yrs);
     var sv  = splitPay(gp, cp, s.gjjM, s.gjjBal);
-    var d   = sv.total/Math.max(inc,0.01);
-    return '<tr><td>'+sc.n+'</td><td>'+f1(inc)+' 万</td><td>'+yuan(sv.total)+'</td>'
-      +'<td style="color:var(--accent)">'+yuan(sv.off)+'</td>'
-      +'<td style="color:var(--amber)">'+yuan(sv.cash)+'</td>'
-      +'<td style="color:'+dc(d)+'">'+pct(d)+'</td><td>'+bdg(d)+'</td></tr>';
+    var d   = sv.total / Math.max(inc, 0.01);
+    return '<tr><td>' + sc.n + '</td><td>' + f1(inc) + ' \u4e07</td><td>' + yuan(sv.total) + '</td>'
+      + '<td style="color:var(--accent)">' + yuan(sv.off) + '</td>'
+      + '<td style="color:var(--amber)">' + yuan(sv.cash) + '</td>'
+      + '<td style="color:' + dc(d) + '">' + pct(d) + '</td><td>' + bdg(d) + '</td></tr>';
   }).join('');
 }
 
-calc();
-
-/* ═══════════════════════════════════
-   导出功能
-═══════════════════════════════════ */
-var H2C_OPTS = {
-  scale: 2,
-  useCORS: true,
-  backgroundColor: '#F0F4F0',
-  logging: false
-};
-
+/* --- Export --- */
+var H2C_OPTS = { scale:2, useCORS:true, backgroundColor:'#F0F4F0', logging:false };
 function setBusy(btn, busy) {
-  if(!btn) return;
-  if(busy) btn.classList.add('busy');
-  else btn.classList.remove('busy');
+  if (!btn) return;
+  if (busy) btn.classList.add('busy'); else btn.classList.remove('busy');
   btn.disabled = busy;
 }
-
-/* 单张 card → PNG 下载 */
 function exportCardPNG(cardId, label, btn) {
   var el = document.getElementById(cardId);
-  if(!el) return;
+  if (!el) return;
   setBusy(btn, true);
   html2canvas(el, H2C_OPTS).then(function(canvas) {
     var a = document.createElement('a');
     a.href = canvas.toDataURL('image/png');
-    a.download = '购房测算_' + label + '_' + new Date().toLocaleDateString('zh-CN').replace(/\//g,'-') + '.png';
+    a.download = '\u8d2d\u623f\u6d4b\u7b97_' + label + '_'
+      + new Date().toLocaleDateString('zh-CN').replace(/\//g, '-') + '.png';
     a.click();
     setBusy(btn, false);
-  }).catch(function(e){
-    alert('导出失败：' + e.message);
-    setBusy(btn, false);
-  });
+  }).catch(function(e) { alert('\u5bfc\u51fa\u5931\u8d25: ' + e.message); setBusy(btn, false); });
 }
-
-/* 全部 cards → 单个 PDF，每 card 一页 */
 function exportPDF(btn) {
   var jsPDFCls = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
-  if(!jsPDFCls) {
-    alert('PDF 库尚未加载完成，请稍后再试');
-    return;
-  }
+  if (!jsPDFCls) { alert('PDF \u5e93\u5c1a\u672a\u52a0\u8f7d\uff0c\u8bf7\u7a0d\u5019\u518d\u8bd5'); return; }
   setBusy(btn, true);
 
-  var cards = [
-    { id:'card-funds',    label:'可用资金池'   },
-    { id:'card-schemes',  label:'方案对比'      },
-    { id:'card-detail',   label:'贷款月供明细'  },
-    { id:'card-dti',      label:'DTI收入分配'   },
-    { id:'card-interest', label:'总利息对比'    },
-    { id:'card-stress',   label:'压力测试'      },
-  ];
-  var date = new Date().toLocaleDateString('zh-CN').replace(/\//g,'-');
-  var pdf  = null;
-  var idx  = 0;
+  var s    = S;
+  var date = new Date().toLocaleDateString('zh-CN').replace(/\//g, '-');
 
-  function next() {
-    if(idx >= cards.length) {
-      pdf.save('购房能力测算_' + date + '.pdf');
+  /* ── h2c options: capture FULL element height regardless of scroll/viewport ── */
+  function h2cOpts(el) {
+    var rect = el.getBoundingClientRect();
+    return {
+      scale:        2,
+      useCORS:      true,
+      backgroundColor: '#F0F4F0',
+      logging:      false,
+      scrollX:      0,
+      scrollY:      -window.scrollY,
+      windowWidth:  document.documentElement.scrollWidth,
+      windowHeight: document.documentElement.scrollHeight,
+      x:            0,
+      y:            0,
+      width:        el.scrollWidth,
+      height:       el.scrollHeight
+    };
+  }
+
+  /* ── Off-screen param summary div ── */
+  var paramDiv = document.createElement('div');
+  paramDiv.style.cssText = [
+    'position:fixed','left:-9999px','top:0',
+    'width:1100px','background:#fff',
+    'font-family:-apple-system,Helvetica,sans-serif',
+    'font-size:13px','color:#162016','padding:24px 28px',
+    'border-radius:10px','box-sizing:border-box',
+    'z-index:-1'
+  ].join(';');
+
+  var loanPrioLabel = {
+    gjj_first:'\u516c\u79ef\u91d1\u8d37\u6b3e\u4f18\u5148',
+    com_first:'\u5546\u8d37\u4f18\u5148',
+    equal:'\u5747\u7b49\u5206\u914d',
+    manual:'\u624b\u52a8\u8bbe\u5b9a'
+  }[s.loanPriority] || s.loanPriority;
+  var cashPrioLabel = s.cashPriority === 'parents_first'
+    ? '\u7236\u6bcd\u652f\u6301\u4f18\u5148' : '\u5b58\u6b3e\u73b0\u91d1\u4f18\u5148';
+
+  function pRow(label, val, color) {
+    return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #E4EDE4;font-size:12px">'
+      + '<span style="color:#4A6B4A">' + label + '</span>'
+      + '<span style="font-weight:600;color:' + (color || '#162016') + ';font-family:SF Mono,Menlo,monospace">' + val + '</span>'
+      + '</div>';
+  }
+  function pCol(title, rows) {
+    return '<div style="flex:1;min-width:160px;background:#EBF2EB;border-radius:8px;padding:12px 14px;border:1px solid rgba(42,107,53,0.15)">'
+      + '<div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#1A6B2A;margin-bottom:8px;padding-bottom:5px;border-bottom:2px solid rgba(42,107,53,0.2)">'
+      + title + '</div>'
+      + rows.join('')
+      + '</div>';
+  }
+
+  paramDiv.innerHTML =
+    '<div style="background:#1A6B2A;padding:14px 18px;border-radius:8px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">'
+    + '<div><div style="font-size:10px;color:rgba(255,255,255,.5);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px">\u8d2d\u623f\u80fd\u529b\u6d4b\u7b97</div>'
+    + '<div style="font-size:20px;font-weight:700;color:#fff">\u8f93\u5165\u53c2\u6570\u6c47\u603b</div></div>'
+    + '<div style="color:rgba(255,255,255,.7);font-size:12px">' + date + '</div>'
+    + '</div>'
+    + '<div style="display:flex;gap:10px;flex-wrap:wrap">'
+    + pCol('\u5bb6\u5ead\u8d22\u52a1', [
+        pRow('\u5bb6\u5ead\u6708\u6536\u5165', f1(s.income) + ' \u4e07\u5143'),
+        pRow('\u5b58\u6b3e\u73b0\u91d1',   f0(s.savings) + ' \u4e07\u5143'),
+        pRow('\u7236\u6bcd\u652f\u6301',   f0(s.parents) + ' \u4e07\u5143'),
+        pRow('\u5176\u4ed6\u6708\u8d1f\u503a', f1(s.odebt) + ' \u4e07\u5143'),
+      ])
+    + pCol('\u5f85\u552e\u623f\u4ea7', [
+        pRow('\u5f85\u552e\u5e02\u503c', f0(s.hsell) + ' \u4e07\u5143'),
+        pRow('\u5f85\u552e\u4f59\u8d37', f0(s.hdebt) + ' \u4e07\u5143'),
+        pRow('\u51c0\u5f97\u9884\u8ba1', f0(s.hsellNet) + ' \u4e07\u5143', '#0F7B6C'),
+      ])
+    + pCol('\u8d2d\u623f\u6761\u4ef6', [
+        pRow('\u76ee\u6807\u603b\u4ef7', f0(s.hp) + ' \u4e07\u5143'),
+        pRow('\u9996\u4ed8\u6bd4\u4f8b', Math.round(s.dpct * 100) + '%'),
+        pRow('\u9996\u4ed8\u91d1\u989d', f0(s.down) + ' \u4e07\u5143', '#B07000'),
+        pRow('\u4e2d\u4ecb\u8d39', f1(s.agent) + ' \u4e07'),
+        pRow('\u5951\u7a0e', f1(s.deed) + ' \u4e07'),
+        pRow('\u5bb6\u5177\u5bb6\u7535', f1(parseFloat(document.getElementById('n-furn').value) || 0) + ' \u4e07'),
+        pRow('\u9644\u52a0\u8d39\u7528', f1(s.extras) + ' \u4e07\u5143', '#B07000'),
+      ])
+    + pCol('\u8d37\u6b3e\u53c2\u6570', [
+        pRow('\u516c\u79ef\u91d1\u4e0a\u9650', f0(s.gjjQ) + ' \u4e07\u5143'),
+        pRow('\u516c\u79ef\u91d1\u6708\u7f34', f2(s.gjjM) + ' \u4e07\u5143'),
+        pRow('\u516c\u79ef\u91d1\u5229\u7387', (s.gjjR * 100).toFixed(2) + '%'),
+        pRow('\u5546\u8d37\u5229\u7387', (s.comR * 100).toFixed(2) + '%'),
+        pRow('\u8d37\u6b3e\u5e74\u9650', s.yrs + ' \u5e74'),
+        pRow('\u516c\u79ef\u91d1\u4f59\u989d', f2(s.gjjBal) + ' \u4e07\u5143'),
+      ])
+    + pCol('\u4f18\u5148\u987a\u5e8f', [
+        pRow('\u8d37\u6b3e\u987a\u5e8f', loanPrioLabel),
+        pRow('\u73b0\u91d1\u987a\u5e8f', cashPrioLabel),
+        pRow('\u5269\u4f59\u5904\u7406(A)', s.useSurplusA ? '\u589e\u52a0\u9996\u4ed8' : '\u4fdd\u7559\u73b0\u91d1'),
+        pRow('\u5269\u4f59\u5904\u7406(B)', s.useSurplusB ? '\u589e\u52a0\u9996\u4ed8' : '\u4fdd\u7559\u73b0\u91d1'),
+      ])
+    + pCol('\u6d4b\u7b97\u7ed3\u679c', [
+        pRow('A \u5546\u8d37', f0(s.comLA) + ' \u4e07'),
+        pRow('A \u6708\u4f9b', yuan(s.spA.total), '#1A6B2A'),
+        pRow('A \u73b0\u91d1\u5b9e\u4ed8', yuan(s.spA.cash), '#B07000'),
+        pRow('B \u5546\u8d37', f0(s.comLB) + ' \u4e07'),
+        pRow('B \u6708\u4f9b', yuan(s.spB.total), '#1A6B2A'),
+        pRow('B \u73b0\u91d1\u5b9e\u4ed8', yuan(s.spB.cash), '#0F7B6C'),
+        pRow('A \u624b\u5934\u73b0\u91d1', f2(s.finalCashA) + ' \u4e07', '#1A6B2A'),
+        pRow('B \u624b\u5934\u73b0\u91d1', f2(s.finalCashB) + ' \u4e07', '#0F7B6C'),
+      ])
+    + '</div>';
+
+  document.body.appendChild(paramDiv);
+
+  /* ── Page groups ── */
+  var groups = [
+    { el: paramDiv, label: '\u8f93\u5165\u53c2\u6570' },
+    { ids: ['card-funds', 'card-schemes'],   label: '\u8d44\u91d1\u6c60 & \u65b9\u6848\u5bf9\u6bd4' },
+    { ids: ['card-detail', 'card-dti'],      label: '\u8d37\u6b3e\u6708\u4f9b & DTI\u5206\u914d' },
+    { ids: ['card-interest', 'card-stress'], label: '\u5229\u606f\u5bf9\u6bd4 & \u538b\u529b\u6d4b\u8bd5' },
+  ];
+
+  var pdf = null, pi = 0, totalPages = groups.length;
+
+  /* ── Capture header as image to avoid Chinese font issues ── */
+  function makeHeaderCanvas(label, pageNum, cb) {
+    var hd = document.createElement('div');
+    hd.style.cssText = [
+      'position:fixed','left:-9999px','top:0',
+      'width:1100px','height:44px',
+      'background:#0D3A18',
+      'display:flex','align-items:center','justify-content:space-between',
+      'padding:0 28px','box-sizing:border-box',
+      'font-family:-apple-system,Helvetica,sans-serif',
+      'font-size:14px','color:#fff',
+      'z-index:-1'
+    ].join(';');
+    hd.innerHTML = '<span>\u8d2d\u623f\u80fd\u529b\u6d4b\u7b97 \u00b7 ' + label + '</span>'
+      + '<span style="color:#96D2A0;font-size:12px">' + date + ' &nbsp;&nbsp; ' + pageNum + ' / ' + totalPages + '</span>';
+    document.body.appendChild(hd);
+    var hOpts = { scale:2, backgroundColor:'#0D3A18', logging:false,
+                  windowWidth:1100, windowHeight:44, width:1100, height:44 };
+    html2canvas(hd, hOpts).then(function(c){ document.body.removeChild(hd); cb(c); })
+      .catch(function(){ document.body.removeChild(hd); cb(null); });
+  }
+
+  /* ── Main loop ── */
+  function nextGroup() {
+    if (pi >= groups.length) {
+      document.body.removeChild(paramDiv);
+      pdf.save('\u8d2d\u623f\u80fd\u529b\u6d4b\u7b97_' + date + '.pdf');
       setBusy(btn, false);
       return;
     }
-    var c  = cards[idx];
-    var el = document.getElementById(c.id);
-    if(!el) { idx++; next(); return; }
 
-    html2canvas(el, H2C_OPTS).then(function(canvas) {
-      // A4宽 595pt，两侧各30pt边距，可用 535pt
-      var usableW = 535;
-      var scaledH = Math.round(canvas.height * usableW / canvas.width);
-      var pageW   = usableW + 60;
-      var pageH   = scaledH + 80;
+    var pg  = groups[pi];
+    var A4W = 780, margin = 20, gap = 12;
 
-      if(!pdf) {
-        pdf = new jsPDFCls({ orientation:'p', unit:'pt', format:[pageW, pageH] });
-      } else {
-        pdf.addPage([pageW, pageH], 'p');
+    var els = pg.el
+      ? [pg.el]
+      : pg.ids
+          .filter(function(id){ return !!document.getElementById(id); })
+          .map(function(id){ return document.getElementById(id); });
+
+    if (els.length === 0) { pi++; nextGroup(); return; }
+
+    /* Capture elements one by one with FULL-HEIGHT options */
+    var canvases = [], ci = 0;
+    function captureNext() {
+      if (ci >= els.length) {
+        makeHeaderCanvas(pg.label, pi + 1, function(hdrC){ stitch(hdrC); });
+        return;
+      }
+      var el = els[ci];
+      /* Force full scroll dimensions */
+      var opts = {
+        scale:        2,
+        useCORS:      true,
+        backgroundColor: '#F0F4F0',
+        logging:      false,
+        scrollX:      -window.scrollX,
+        scrollY:      -window.scrollY,
+        windowWidth:  Math.max(document.documentElement.scrollWidth, 1400),
+        windowHeight: Math.max(document.documentElement.scrollHeight, 3000),
+        width:        el.scrollWidth  || el.offsetWidth,
+        height:       el.scrollHeight || el.offsetHeight
+      };
+      html2canvas(el, opts).then(function(c){
+        canvases.push(c); ci++; captureNext();
+      }).catch(function(e){ alert('\u622a\u56fe\u5931\u8d25: ' + e.message); setBusy(btn, false); });
+    }
+
+    function stitch(hdrC) {
+      /* Scale factor: fit A4W */
+      var scaledH = function(c){ return Math.round(c.height * A4W / c.width); };
+      var hdrH    = hdrC ? scaledH(hdrC) : 0;
+      var heights = canvases.map(scaledH);
+      var bodyH   = heights.reduce(function(a,b){ return a + b; }, 0)
+                  + gap * Math.max(0, canvases.length - 1);
+      var pageW   = A4W + margin * 2;
+      var pageH   = hdrH + margin + bodyH + margin;
+
+      if (!pdf) pdf = new jsPDFCls({ orientation:'p', unit:'pt', format:[pageW, pageH] });
+      else       pdf.addPage([pageW, pageH], 'p');
+
+      /* Header spans full page width */
+      if (hdrC) {
+        pdf.addImage(hdrC.toDataURL('image/png', 1.0), 'PNG', 0, 0, pageW, hdrH);
       }
 
-      // 页眉条
-      pdf.setFillColor(13, 58, 24);
-      pdf.rect(0, 0, pageW, 30, 'F');
-      pdf.setTextColor(255, 255, 255);
-      pdf.setFontSize(9);
-      pdf.text('购房能力测算  ·  ' + c.label, 18, 19);
-      pdf.setTextColor(150, 210, 160);
-      pdf.text(date, pageW - 18, 19, { align:'right' });
+      var y = hdrH + margin;
+      for (var i = 0; i < canvases.length; i++) {
+        pdf.addImage(
+          canvases[i].toDataURL('image/png', 0.94), 'PNG',
+          margin, y, A4W, heights[i]
+        );
+        y += heights[i] + gap;
+      }
 
-      pdf.addImage(canvas.toDataURL('image/png', 0.95), 'PNG', 30, 38, usableW, scaledH);
+      pi++; nextGroup();
+    }
 
-      // 页脚页码
-      pdf.setTextColor(140, 180, 140);
-      pdf.setFontSize(7);
-      pdf.text((idx+1) + ' / ' + cards.length, pageW - 18, pageH - 14, { align:'right' });
-
-      idx++;
-      next();
-    }).catch(function(e){
-      alert('截图失败（' + c.label + '）：' + e.message);
-      setBusy(btn, false);
-    });
+    captureNext();
   }
 
-  next();
+  nextGroup();
 }
+
+calc();
+
 </script>
 </body>
 </html>
