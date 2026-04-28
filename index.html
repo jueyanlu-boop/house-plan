@@ -1756,6 +1756,183 @@ function exportPDF(btn) {
   nextGroup();
 }
 
+/* Stable A4 pagination override for complete PDF export. */
+window.exportPDF = function(btn) {
+  var jsPDFCls = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+  if (!jsPDFCls) { alert('PDF 库尚未加载，请稍候再试'); return; }
+  setBusy(btn, true);
+
+  var date = new Date().toLocaleDateString('zh-CN').replace(/\//g, '-');
+  var pageW = 595.28, pageH = 841.89, margin = 28;
+  var headerH = 30, headerGap = 10, gap = 18;
+  var contentW = pageW - margin * 2;
+  var pdf = null;
+
+  function captureOpts(el) {
+    return {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#F0F4F0',
+      logging: false,
+      scrollX: 0,
+      scrollY: 0,
+      windowWidth: Math.max(document.documentElement.scrollWidth, el.scrollWidth || 0),
+      windowHeight: Math.max(document.documentElement.scrollHeight, el.scrollHeight || 0),
+      width: el.scrollWidth || el.offsetWidth,
+      height: el.scrollHeight || el.offsetHeight
+    };
+  }
+
+  function makeInputClone() {
+    var src = document.querySelector('.ipanel');
+    if (!src) return null;
+    var clone = src.cloneNode(true);
+    clone.id = 'pdf-input-panel';
+    clone.style.cssText = [
+      'position:fixed','left:-9999px','top:0','width:1100px',
+      'max-height:none','height:auto','overflow:visible',
+      'background:#fff','z-index:-1'
+    ].join(';');
+    document.body.appendChild(clone);
+    return clone;
+  }
+
+  function makeHeader(label, cb) {
+    var hd = document.createElement('div');
+    hd.style.cssText = [
+      'position:fixed','left:-9999px','top:0',
+      'width:1100px','height:40px','background:#0D3A18',
+      'display:flex','align-items:center','justify-content:space-between',
+      'padding:0 24px','box-sizing:border-box',
+      'font-family:-apple-system,Helvetica,sans-serif',
+      'font-size:13px','color:#fff','z-index:-1'
+    ].join(';');
+    hd.innerHTML = '<span>购房能力测算 · ' + label + '</span><span style="color:#96D2A0;font-size:12px">' + date + '</span>';
+    document.body.appendChild(hd);
+    html2canvas(hd, {
+      scale: 2,
+      backgroundColor: '#0D3A18',
+      logging: false,
+      width: 1100,
+      height: 40,
+      windowWidth: 1100,
+      windowHeight: 40
+    }).then(function(canvas) {
+      document.body.removeChild(hd);
+      cb(canvas);
+    }).catch(function() {
+      try { document.body.removeChild(hd); } catch (_) {}
+      cb(null);
+    });
+  }
+
+  function combineCanvases(canvases) {
+    var maxW = 0, totalH = 0;
+    canvases.forEach(function(c, i) {
+      maxW = Math.max(maxW, c.width);
+      totalH += c.height + (i < canvases.length - 1 ? gap : 0);
+    });
+    var combined = document.createElement('canvas');
+    combined.width = maxW;
+    combined.height = totalH;
+    var ctx = combined.getContext('2d');
+    ctx.fillStyle = '#F0F4F0';
+    ctx.fillRect(0, 0, combined.width, combined.height);
+    var y = 0;
+    canvases.forEach(function(c, i) {
+      ctx.drawImage(c, 0, y);
+      y += c.height + (i < canvases.length - 1 ? gap : 0);
+    });
+    return combined;
+  }
+
+  function addPagedCanvas(sourceCanvas, headerCanvas) {
+    var hdrDrawH = headerCanvas ? headerH : 0;
+    var topY = margin + hdrDrawH + (headerCanvas ? headerGap : 0);
+    var availableH = pageH - topY - margin;
+    var scale = contentW / sourceCanvas.width;
+    var sliceSrcH = Math.max(1, Math.floor(availableH / scale));
+    var sy = 0;
+
+    while (sy < sourceCanvas.height) {
+      var sh = Math.min(sliceSrcH, sourceCanvas.height - sy);
+      var slice = document.createElement('canvas');
+      slice.width = sourceCanvas.width;
+      slice.height = sh;
+      var ctx = slice.getContext('2d');
+      ctx.fillStyle = '#F0F4F0';
+      ctx.fillRect(0, 0, slice.width, slice.height);
+      ctx.drawImage(sourceCanvas, 0, sy, sourceCanvas.width, sh, 0, 0, sourceCanvas.width, sh);
+
+      if (!pdf) pdf = new jsPDFCls({ orientation: 'p', unit: 'pt', format: 'a4' });
+      else pdf.addPage('a4', 'p');
+
+      if (headerCanvas) {
+        pdf.addImage(headerCanvas.toDataURL('image/png', 1.0), 'PNG', 0, 0, pageW, hdrDrawH);
+      }
+      var drawH = slice.height * contentW / slice.width;
+      pdf.addImage(slice.toDataURL('image/png', 0.95), 'PNG', margin, topY, contentW, drawH);
+      sy += sh;
+    }
+  }
+
+  function captureElements(elements, cb) {
+    var canvases = [], i = 0;
+    function next() {
+      if (i >= elements.length) { cb(canvases); return; }
+      html2canvas(elements[i], captureOpts(elements[i])).then(function(canvas) {
+        canvases.push(canvas);
+        i++;
+        next();
+      }).catch(function(e) {
+        throw e;
+      });
+    }
+    next();
+  }
+
+  var inputClone = makeInputClone();
+  var groups = [
+    { label: '输入参数', elements: inputClone ? [inputClone] : [] },
+    { label: '资金池 & 方案对比', ids: ['card-funds', 'card-schemes'] },
+    { label: '贷款月供 & DTI分配', ids: ['card-detail', 'card-dti'] },
+    { label: '利息对比 & 压力测试', ids: ['card-interest', 'card-stress'] }
+  ];
+
+  var gi = 0;
+  function runGroup() {
+    if (gi >= groups.length) {
+      try { if (inputClone) document.body.removeChild(inputClone); } catch (_) {}
+      if (pdf) pdf.save('购房能力测算_' + date + '.pdf');
+      setBusy(btn, false);
+      return;
+    }
+
+    var group = groups[gi];
+    var elements = group.elements || group.ids.map(function(id) {
+      return document.getElementById(id);
+    }).filter(Boolean);
+
+    if (!elements.length) { gi++; runGroup(); return; }
+
+    captureElements(elements, function(canvases) {
+      makeHeader(group.label, function(headerCanvas) {
+        addPagedCanvas(combineCanvases(canvases), headerCanvas);
+        gi++;
+        runGroup();
+      });
+    });
+  }
+
+  try {
+    runGroup();
+  } catch (e) {
+    try { if (inputClone) document.body.removeChild(inputClone); } catch (_) {}
+    alert('导出失败: ' + e.message);
+    setBusy(btn, false);
+  }
+};
+
 calc();
 
 </script>
