@@ -470,10 +470,10 @@ select.prio-sel:focus { border-color: var(--accent); }
 
       <div style="font-size:10px;font-weight:600;color:var(--tx2);margin:6px 0 4px">方案 A（先买后卖）</div>
       <label class="prio-check">
-        <input type="checkbox" id="chk-surplus-a" onchange="onPriorityChange()">
+        <input type="checkbox" id="chk-surplus-a" onchange="onPriorityChange()" checked>
         现金剩余用于增加首付（减少贷款）
       </label>
-      <label class="prio-check" style="margin-top:4px;display:none" id="row-keepgjj-a">
+      <label class="prio-check" style="margin-top:4px;display:flex" id="row-keepgjj-a">
         <input type="checkbox" id="chk-keepgjj-a" onchange="onPriorityChange()" checked>
         公积金贷款保持上限，只减少商贷
       </label>
@@ -496,8 +496,8 @@ select.prio-sel:focus { border-color: var(--accent); }
     <div class="irow">
       <div class="irow-top"><span class="irow-lbl">月收入（税后）</span><span class="unit">万</span></div>
       <div class="dual-input">
-        <input type="range" id="r-income" min="0" max="50" step="0.5" value="0" oninput="syncFromSlider('income')">
-        <input type="number" class="num-box" id="n-income" min="0" max="50" step="0.5" value="0" oninput="syncFromNum('income')" onfocus="numFocus(this)" onblur="numBlur('income',this)">
+        <input type="range" id="r-income" min="0" max="50" step="0.5" value="5" oninput="syncFromSlider('income')">
+        <input type="number" class="num-box" id="n-income" min="0" max="50" step="0.5" value="5" oninput="syncFromNum('income')" onfocus="numFocus(this)" onblur="numBlur('income',this)">
       </div>
     </div>
   </div>
@@ -508,22 +508,22 @@ select.prio-sel:focus { border-color: var(--accent); }
     <div class="irow">
       <div class="irow-top"><span class="irow-lbl">存款现金</span><span class="unit">万</span></div>
       <div class="dual-input">
-        <input type="range" id="r-savings" min="0" max="600" step="5" value="0" oninput="syncFromSlider('savings')">
-        <input type="number" class="num-box" id="n-savings" min="0" max="600" step="5" value="0" oninput="syncFromNum('savings')" onfocus="numFocus(this)" onblur="numBlur('savings',this)">
+        <input type="range" id="r-savings" min="0" max="600" step="5" value="230" oninput="syncFromSlider('savings')">
+        <input type="number" class="num-box" id="n-savings" min="0" max="600" step="5" value="230" oninput="syncFromNum('savings')" onfocus="numFocus(this)" onblur="numBlur('savings',this)">
       </div>
     </div>
     <div class="irow">
       <div class="irow-top"><span class="irow-lbl">父母可支持</span><span class="unit">万</span></div>
       <div class="dual-input">
-        <input type="range" id="r-parents" min="0" max="300" step="10" value="0" oninput="syncFromSlider('parents')">
-        <input type="number" class="num-box" id="n-parents" min="0" max="300" step="10" value="0" oninput="syncFromNum('parents')" onfocus="numFocus(this)" onblur="numBlur('parents',this)">
+        <input type="range" id="r-parents" min="0" max="300" step="10" value="200" oninput="syncFromSlider('parents')">
+        <input type="number" class="num-box" id="n-parents" min="0" max="300" step="10" value="200" oninput="syncFromNum('parents')" onfocus="numFocus(this)" onblur="numBlur('parents',this)">
       </div>
     </div>
     <div class="irow">
       <div class="irow-top"><span class="irow-lbl">待售房产市值<span class="field-hint"> · 挂牌价或评估价，填0表示无待售房产</span></span><span class="unit">万</span></div>
       <div class="dual-input">
-        <input type="range" id="r-hsell" min="0" max="1000" step="10" value="0" oninput="syncFromSlider('hsell')">
-        <input type="number" class="num-box" id="n-hsell" min="0" max="1000" step="10" value="0" oninput="syncFromNum('hsell')" onfocus="numFocus(this)" onblur="numBlur('hsell',this)">
+        <input type="range" id="r-hsell" min="0" max="1000" step="10" value="330" oninput="syncFromSlider('hsell')">
+        <input type="number" class="num-box" id="n-hsell" min="0" max="1000" step="10" value="330" oninput="syncFromNum('hsell')" onfocus="numFocus(this)" onblur="numBlur('hsell',this)">
       </div>
     </div>
     <div class="irow">
@@ -608,8 +608,8 @@ select.prio-sel:focus { border-color: var(--accent); }
     <div class="irow">
       <div class="irow-top"><span class="irow-lbl">账户余额（可提取抵扣）<span class="field-hint"> · 可用于补贴月供不足的公积金账户余额</span></span><span class="unit">万</span></div>
       <div class="dual-input">
-        <input type="range" id="r-gjjBal" min="0" max="100" step="1" value="0" oninput="syncFromSlider('gjjBal')">
-        <input type="number" class="num-box" id="n-gjjBal" min="0" max="100" step="1" value="0" oninput="syncFromNum('gjjBal')" onfocus="numFocus(this)" onblur="numBlur('gjjBal',this)">
+        <input type="range" id="r-gjjBal" min="0" max="100" step="1" value="40" oninput="syncFromSlider('gjjBal')">
+        <input type="number" class="num-box" id="n-gjjBal" min="0" max="100" step="1" value="40" oninput="syncFromNum('gjjBal')" onfocus="numFocus(this)" onblur="numBlur('gjjBal',this)">
       </div>
     </div>
     <div class="irow">
@@ -1533,273 +1533,170 @@ function exportPDF(btn) {
 
   var s    = S;
   var date = new Date().toLocaleDateString('zh-CN').replace(/\//g, '-');
+  var RENDER_W = 1200;  // fixed render width for all clones
 
-  /* ── h2c options: capture FULL element height regardless of scroll/viewport ── */
-  function h2cOpts(el) {
-    var rect = el.getBoundingClientRect();
-    return {
-      scale:        2,
-      useCORS:      true,
-      backgroundColor: '#F0F4F0',
-      logging:      false,
-      scrollX:      0,
-      scrollY:      -window.scrollY,
-      windowWidth:  document.documentElement.scrollWidth,
-      windowHeight: document.documentElement.scrollHeight,
-      x:            0,
-      y:            0,
-      width:        el.scrollWidth,
-      height:       el.scrollHeight
-    };
-  }
-
-  /* ── Off-screen param summary div ── */
+  /* ── Build off-screen param summary ── */
   var paramDiv = document.createElement('div');
-  paramDiv.style.cssText = [
-    'position:fixed','left:-9999px','top:0',
-    'width:1100px','background:#fff',
-    'font-family:-apple-system,Helvetica,sans-serif',
-    'font-size:13px','color:#162016','padding:24px 28px',
-    'border-radius:10px','box-sizing:border-box',
-    'z-index:-1'
-  ].join(';');
+  paramDiv.style.cssText = 'position:fixed;left:-9999px;top:0;width:' + RENDER_W + 'px;'
+    + 'background:#fff;font-family:-apple-system,Helvetica,sans-serif;font-size:13px;'
+    + 'color:#162016;padding:24px 28px;box-sizing:border-box;z-index:-1;';
 
-  var loanPrioLabel = {
+  var lbl = {
     gjj_first:'\u516c\u79ef\u91d1\u8d37\u6b3e\u4f18\u5148',
     com_first:'\u5546\u8d37\u4f18\u5148',
     equal:'\u5747\u7b49\u5206\u914d',
     manual:'\u624b\u52a8\u8bbe\u5b9a'
   }[s.loanPriority] || s.loanPriority;
-  var cashPrioLabel = s.cashPriority === 'parents_first'
-    ? '\u7236\u6bcd\u652f\u6301\u4f18\u5148' : '\u5b58\u6b3e\u73b0\u91d1\u4f18\u5148';
+  var cpLbl = s.cashPriority==='parents_first'?'\u7236\u6bcd\u652f\u6301\u4f18\u5148':'\u5b58\u6b3e\u73b0\u91d1\u4f18\u5148';
 
-  function pRow(label, val, color) {
-    return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #E4EDE4;font-size:12px">'
-      + '<span style="color:#4A6B4A">' + label + '</span>'
-      + '<span style="font-weight:600;color:' + (color || '#162016') + ';font-family:SF Mono,Menlo,monospace">' + val + '</span>'
-      + '</div>';
-  }
-  function pCol(title, rows) {
-    return '<div style="flex:1;min-width:160px;background:#EBF2EB;border-radius:8px;padding:12px 14px;border:1px solid rgba(42,107,53,0.15)">'
-      + '<div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#1A6B2A;margin-bottom:8px;padding-bottom:5px;border-bottom:2px solid rgba(42,107,53,0.2)">'
-      + title + '</div>'
-      + rows.join('')
-      + '</div>';
-  }
+  function pR(l,v,c){return '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #E4EDE4;font-size:12px"><span style="color:#4A6B4A">'+l+'</span><span style="font-weight:600;color:'+(c||'#162016')+';font-family:SF Mono,Menlo,monospace">'+v+'</span></div>';}
+  function pC(t,rows){return '<div style="flex:1;min-width:155px;background:#EBF2EB;border-radius:8px;padding:11px 13px;border:1px solid rgba(42,107,53,0.15)"><div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#1A6B2A;margin-bottom:7px;padding-bottom:5px;border-bottom:2px solid rgba(42,107,53,0.2)">'+t+'</div>'+rows.join('')+'</div>';}
 
   paramDiv.innerHTML =
-    '<div style="background:#1A6B2A;padding:14px 18px;border-radius:8px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">'
-    + '<div><div style="font-size:10px;color:rgba(255,255,255,.5);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px">\u8d2d\u623f\u80fd\u529b\u6d4b\u7b97</div>'
-    + '<div style="font-size:20px;font-weight:700;color:#fff">\u8f93\u5165\u53c2\u6570\u6c47\u603b</div></div>'
-    + '<div style="color:rgba(255,255,255,.7);font-size:12px">' + date + '</div>'
-    + '</div>'
-    + '<div style="display:flex;gap:10px;flex-wrap:wrap">'
-    + pCol('\u5bb6\u5ead\u8d22\u52a1', [
-        pRow('\u5bb6\u5ead\u6708\u6536\u5165', f1(s.income) + ' \u4e07\u5143'),
-        pRow('\u5b58\u6b3e\u73b0\u91d1',   f0(s.savings) + ' \u4e07\u5143'),
-        pRow('\u7236\u6bcd\u652f\u6301',   f0(s.parents) + ' \u4e07\u5143'),
-        pRow('\u5176\u4ed6\u6708\u8d1f\u503a', f1(s.odebt) + ' \u4e07\u5143'),
-      ])
-    + pCol('\u5f85\u552e\u623f\u4ea7', [
-        pRow('\u5f85\u552e\u5e02\u503c', f0(s.hsell) + ' \u4e07\u5143'),
-        pRow('\u5f85\u552e\u4f59\u8d37', f0(s.hdebt) + ' \u4e07\u5143'),
-        pRow('\u51c0\u5f97\u9884\u8ba1', f0(s.hsellNet) + ' \u4e07\u5143', '#0F7B6C'),
-      ])
-    + pCol('\u8d2d\u623f\u6761\u4ef6', [
-        pRow('\u76ee\u6807\u603b\u4ef7', f0(s.hp) + ' \u4e07\u5143'),
-        pRow('\u9996\u4ed8\u6bd4\u4f8b', Math.round(s.dpct * 100) + '%'),
-        pRow('\u9996\u4ed8\u91d1\u989d', f0(s.down) + ' \u4e07\u5143', '#B07000'),
-        pRow('\u4e2d\u4ecb\u8d39', f1(s.agent) + ' \u4e07'),
-        pRow('\u5951\u7a0e', f1(s.deed) + ' \u4e07'),
-        pRow('\u5bb6\u5177\u5bb6\u7535', f1(parseFloat(document.getElementById('n-furn').value) || 0) + ' \u4e07'),
-        pRow('\u9644\u52a0\u8d39\u7528', f1(s.extras) + ' \u4e07\u5143', '#B07000'),
-      ])
-    + pCol('\u8d37\u6b3e\u53c2\u6570', [
-        pRow('\u516c\u79ef\u91d1\u4e0a\u9650', f0(s.gjjQ) + ' \u4e07\u5143'),
-        pRow('\u516c\u79ef\u91d1\u6708\u7f34', f2(s.gjjM) + ' \u4e07\u5143'),
-        pRow('\u516c\u79ef\u91d1\u5229\u7387', (s.gjjR * 100).toFixed(2) + '%'),
-        pRow('\u5546\u8d37\u5229\u7387', (s.comR * 100).toFixed(2) + '%'),
-        pRow('\u8d37\u6b3e\u5e74\u9650', s.yrs + ' \u5e74'),
-        pRow('\u516c\u79ef\u91d1\u4f59\u989d', f2(s.gjjBal) + ' \u4e07\u5143'),
-      ])
-    + pCol('\u4f18\u5148\u987a\u5e8f', [
-        pRow('\u8d37\u6b3e\u987a\u5e8f', loanPrioLabel),
-        pRow('\u73b0\u91d1\u987a\u5e8f', cashPrioLabel),
-        pRow('\u5269\u4f59\u5904\u7406(A)', s.useSurplusA ? '\u589e\u52a0\u9996\u4ed8' : '\u4fdd\u7559\u73b0\u91d1'),
-        pRow('\u5269\u4f59\u5904\u7406(B)', s.useSurplusB ? '\u589e\u52a0\u9996\u4ed8' : '\u4fdd\u7559\u73b0\u91d1'),
-      ])
-    + pCol('\u6d4b\u7b97\u7ed3\u679c', [
-        pRow('A \u5546\u8d37', f0(s.comLA) + ' \u4e07'),
-        pRow('A \u6708\u4f9b', yuan(s.spA.total), '#1A6B2A'),
-        pRow('A \u73b0\u91d1\u5b9e\u4ed8', yuan(s.spA.cash), '#B07000'),
-        pRow('B \u5546\u8d37', f0(s.comLB) + ' \u4e07'),
-        pRow('B \u6708\u4f9b', yuan(s.spB.total), '#1A6B2A'),
-        pRow('B \u73b0\u91d1\u5b9e\u4ed8', yuan(s.spB.cash), '#0F7B6C'),
-        pRow('A \u624b\u5934\u73b0\u91d1', f2(s.finalCashA) + ' \u4e07', '#1A6B2A'),
-        pRow('B \u624b\u5934\u73b0\u91d1', f2(s.finalCashB) + ' \u4e07', '#0F7B6C'),
-      ])
-    + '</div>';
+    '<div style="background:#1A6B2A;padding:13px 17px;border-radius:8px;margin-bottom:13px;display:flex;justify-content:space-between;align-items:center">'
+    +'<div><div style="font-size:9px;color:rgba(255,255,255,.5);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px">\u8d2d\u623f\u80fd\u529b\u6d4b\u7b97</div>'
+    +'<div style="font-size:19px;font-weight:700;color:#fff">\u8f93\u5165\u53c2\u6570\u6c47\u603b</div></div>'
+    +'<div style="color:rgba(255,255,255,.7);font-size:12px">'+date+'</div></div>'
+    +'<div style="display:flex;gap:9px;flex-wrap:wrap">'
+    +pC('\u5bb6\u5ead\u8d22\u52a1',[pR('\u6708\u6536\u5165',f1(s.income)+' \u4e07\u5143'),pR('\u5b58\u6b3e\u73b0\u91d1',f0(s.savings)+' \u4e07\u5143'),pR('\u7236\u6bcd\u652f\u6301',f0(s.parents)+' \u4e07\u5143'),pR('\u5176\u4ed6\u8d1f\u503a',f1(s.odebt)+' \u4e07\u5143')])
+    +pC('\u5f85\u552e\u623f\u4ea7',[pR('\u5f85\u552e\u5e02\u503c',f0(s.hsell)+' \u4e07\u5143'),pR('\u4f59\u8d37',f0(s.hdebt)+' \u4e07\u5143'),pR('\u51c0\u5f97\u9884\u8ba1',f0(s.hsellNet)+' \u4e07\u5143','#0F7B6C')])
+    +pC('\u8d2d\u623f\u6761\u4ef6',[pR('\u76ee\u6807\u603b\u4ef7',f0(s.hp)+' \u4e07\u5143'),pR('\u9996\u4ed8\u6bd4\u4f8b',Math.round(s.dpct*100)+'%'),pR('\u9996\u4ed8\u91d1\u989d',f0(s.down)+' \u4e07\u5143','#B07000'),pR('\u4e2d\u4ecb\u8d39',f1(s.agent)+' \u4e07'),pR('\u5951\u7a0e',f1(s.deed)+' \u4e07'),pR('\u5bb6\u5177\u5bb6\u7535',f1(parseFloat(document.getElementById('n-furn').value)||0)+' \u4e07'),pR('\u9644\u52a0\u8d39\u7528\u5408\u8ba1',f1(s.extras)+' \u4e07\u5143','#B07000')])
+    +pC('\u8d37\u6b3e\u53c2\u6570',[pR('\u516c\u79ef\u91d1\u4e0a\u9650',f0(s.gjjQ)+' \u4e07'),pR('\u516c\u79ef\u91d1\u6708\u7f34',f2(s.gjjM)+' \u4e07'),pR('\u516c\u79ef\u91d1\u5229\u7387',(s.gjjR*100).toFixed(2)+'%'),pR('\u5546\u8d37\u5229\u7387',(s.comR*100).toFixed(2)+'%'),pR('\u8d37\u6b3e\u5e74\u9650',s.yrs+' \u5e74'),pR('\u516c\u79ef\u91d1\u4f59\u989d',f2(s.gjjBal)+' \u4e07')])
+    +pC('\u4f18\u5148\u987a\u5e8f',[pR('\u8d37\u6b3e\u987a\u5e8f',lbl),pR('\u73b0\u91d1\u987a\u5e8f',cpLbl),pR('\u5269\u4f59\u5904\u7406(A)',s.useSurplusA?'\u589e\u52a0\u9996\u4ed8':'\u4fdd\u7559\u73b0\u91d1'),pR('\u5269\u4f59\u5904\u7406(B)',s.useSurplusB?'\u589e\u52a0\u9996\u4ed8':'\u4fdd\u7559\u73b0\u91d1')])
+    +pC('\u6d4b\u7b97\u7ed3\u679c',[pR('A \u5546\u8d37',f0(s.comLA)+' \u4e07'),pR('A \u6708\u4f9b',yuan(s.spA.total),'#1A6B2A'),pR('A \u73b0\u91d1\u5b9e\u4ed8',yuan(s.spA.cash),'#B07000'),pR('A \u624b\u5934\u73b0\u91d1',f2(s.finalCashA)+' \u4e07','#1A6B2A'),pR('B \u5546\u8d37',f0(s.comLB)+' \u4e07'),pR('B \u6708\u4f9b',yuan(s.spB.total),'#1A6B2A'),pR('B \u73b0\u91d1\u5b9e\u4ed8',yuan(s.spB.cash),'#0F7B6C'),pR('B \u624b\u5934\u73b0\u91d1',f2(s.finalCashB)+' \u4e07','#0F7B6C')])
+    +'</div>';
 
   document.body.appendChild(paramDiv);
 
-  /* ── Page groups ── */
-  // Each card = one page so nothing gets cut off
-  var groups = [
-    { el: paramDiv,              label: '\u8f93\u5165\u53c2\u6570' },
-    { id: 'card-funds',          label: '\u53ef\u7528\u8d44\u91d1\u6c60' },
-    { id: 'card-schemes',        label: '\u65b9\u6848\u5bf9\u6bd4\uff0d\u6708\u4f9b\u62c6\u5206' },
-    { id: 'card-detail',         label: '\u8d37\u6b3e & \u6708\u4f9b\u660e\u7ec6' },
-    { id: 'card-dti',            label: 'DTI & \u6536\u5165\u5206\u914d' },
-    { id: 'card-interest',       label: '\u603b\u5229\u606f\u5bf9\u6bd4' },
-    { id: 'card-stress',         label: '\u538b\u529b\u6d4b\u8bd5' },
+  /* ── Page list: each card = 1 page ── */
+  var pages = [
+    { el: paramDiv,        label: '\u8f93\u5165\u53c2\u6570' },
+    { id: 'card-funds',    label: '\u53ef\u7528\u8d44\u91d1\u6c60' },
+    { id: 'card-schemes',  label: '\u65b9\u6848\u5bf9\u6bd4\uff0d\u6708\u4f9b\u62c6\u5206' },
+    { id: 'card-detail',   label: '\u8d37\u6b3e & \u6708\u4f9b\u660e\u7ec6' },
+    { id: 'card-dti',      label: 'DTI & \u6536\u5165\u5206\u914d' },
+    { id: 'card-interest', label: '\u603b\u5229\u606f\u5bf9\u6bd4' },
+    { id: 'card-stress',   label: '\u538b\u529b\u6d4b\u8bd5' },
   ];
 
-  var pdf = null, pi = 0, totalPages = groups.length;
+  var pdf = null, pi = 0, total = pages.length;
 
-  /* ── Capture header as image to avoid Chinese font issues ── */
-  function makeHeaderCanvas(label, pageNum, cb) {
-    var hd = document.createElement('div');
-    hd.style.cssText = [
-      'position:fixed','left:-9999px','top:0',
-      'width:1100px','height:44px',
-      'background:#0D3A18',
-      'display:flex','align-items:center','justify-content:space-between',
-      'padding:0 28px','box-sizing:border-box',
-      'font-family:-apple-system,Helvetica,sans-serif',
-      'font-size:14px','color:#fff',
-      'z-index:-1'
+  /* ── Render a div clone at full natural height ── */
+  function captureEl(sourceEl, bgColor, cb) {
+    var clone = sourceEl.cloneNode(true);
+    clone.style.cssText = [
+      'position:fixed',
+      'left:-9999px',
+      'top:0',
+      'width:' + RENDER_W + 'px',
+      'height:auto',
+      'max-height:none',
+      'overflow:visible',
+      'z-index:-999',
+      'background:' + (bgColor || '#F0F4F0'),
+      'padding:18px 20px',
+      'box-sizing:border-box',
     ].join(';');
-    hd.innerHTML = '<span>\u8d2d\u623f\u80fd\u529b\u6d4b\u7b97 \u00b7 ' + label + '</span>'
-      + '<span style="color:#96D2A0;font-size:12px">' + date + ' &nbsp;&nbsp; ' + pageNum + ' / ' + totalPages + '</span>';
-    document.body.appendChild(hd);
-    var hOpts = { scale:2, backgroundColor:'#0D3A18', logging:false,
-                  windowWidth:1100, windowHeight:44, width:1100, height:44 };
-    html2canvas(hd, hOpts).then(function(c){ document.body.removeChild(hd); cb(c); })
-      .catch(function(){ document.body.removeChild(hd); cb(null); });
+    document.body.appendChild(clone);
+
+    // Two rAF to let browser fully layout the clone
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        var W = clone.offsetWidth  || RENDER_W;
+        var H = clone.scrollHeight || clone.offsetHeight;
+        html2canvas(clone, {
+          scale:        2,
+          useCORS:      true,
+          backgroundColor: bgColor || '#F0F4F0',
+          logging:      false,
+          scrollX:      0,
+          scrollY:      0,
+          windowWidth:  W,
+          windowHeight: H,
+          width:        W,
+          height:       H
+        }).then(function(c) {
+          document.body.removeChild(clone);
+          cb(c);
+        }).catch(function(e) {
+          document.body.removeChild(clone);
+          alert('\u622a\u56fe\u5931\u8d25: ' + e.message);
+          setBusy(btn, false);
+        });
+      });
+    });
   }
 
-  /* ── Main loop ── */
-  function nextGroup() {
-    if (pi >= groups.length) {
+  /* ── Render green header bar as image ── */
+  function makeHdr(label, pageNum, cb) {
+    var d = document.createElement('div');
+    d.style.cssText = 'position:fixed;left:-9999px;top:0;width:' + RENDER_W + 'px;height:44px;'
+      + 'background:#0D3A18;display:flex;align-items:center;justify-content:space-between;'
+      + 'padding:0 28px;box-sizing:border-box;font-family:-apple-system,Helvetica,sans-serif;'
+      + 'font-size:14px;color:#fff;z-index:-1;';
+    d.innerHTML = '<span>\u8d2d\u623f\u80fd\u529b\u6d4b\u7b97 \u00b7 ' + label + '</span>'
+      + '<span style="color:#96D2A0;font-size:12px">' + date + ' &nbsp; ' + pageNum + ' / ' + total + '</span>';
+    document.body.appendChild(d);
+    requestAnimationFrame(function() {
+      html2canvas(d, {
+        scale:2, backgroundColor:'#0D3A18', logging:false,
+        windowWidth:RENDER_W, windowHeight:44, width:RENDER_W, height:44
+      }).then(function(c){ document.body.removeChild(d); cb(c); })
+       .catch(function(){ document.body.removeChild(d); cb(null); });
+    });
+  }
+
+  /* ── Main loop: one page per card ── */
+  function nextPage() {
+    if (pi >= pages.length) {
       document.body.removeChild(paramDiv);
       pdf.save('\u8d2d\u623f\u80fd\u529b\u6d4b\u7b97_' + date + '.pdf');
       setBusy(btn, false);
       return;
     }
 
-    var pg  = groups[pi];
-    var A4W = 780, margin = 20, gap = 12;
+    var pg = pages[pi];
+    var srcEl = pg.el ? pg.el : document.getElementById(pg.id);
+    if (!srcEl) { pi++; nextPage(); return; }
 
-    var els;
-    if (pg.el) {
-      els = [pg.el];
-    } else if (pg.id) {
-      var single = document.getElementById(pg.id);
-      els = single ? [single] : [];
-    } else if (pg.ids) {
-      els = pg.ids
-        .filter(function(id){ return !!document.getElementById(id); })
-        .map(function(id){ return document.getElementById(id); });
-    } else {
-      els = [];
-    }
+    var bgColor = pg.el ? '#ffffff' : '#F0F4F0';
 
-    if (els.length === 0) { pi++; nextGroup(); return; }
+    captureEl(srcEl, bgColor, function(cardCanvas) {
+      makeHdr(pg.label, pi + 1, function(hdrCanvas) {
+        // Page dimensions: full-width, auto-height to fit card exactly
+        var MARGIN = 24;   // pt
+        var PAGE_W = 842;  // A4 landscape width in pt — gives more room
+        var USABLE = PAGE_W - MARGIN * 2;
 
-    /* Capture elements: clone each to top-level body to get true full height */
-    var canvases = [], ci = 0;
-    function captureNext() {
-      if (ci >= els.length) {
-        makeHeaderCanvas(pg.label, pi + 1, function(hdrC){ stitch(hdrC); });
-        return;
-      }
-      var el    = els[ci];
-      var clone = el.cloneNode(true);
+        var hdrH    = hdrCanvas
+          ? Math.round(hdrCanvas.height * PAGE_W / hdrCanvas.width)
+          : 0;
+        var cardH   = Math.round(cardCanvas.height * USABLE / cardCanvas.width);
+        var PAGE_H  = hdrH + MARGIN + cardH + MARGIN;
 
-      // Render clone at fixed width, position off-screen, NO height constraint
-      clone.style.cssText = [
-        'position:fixed',
-        'left:-9999px',
-        'top:0',
-        'width:1200px',      // fixed render width
-        'height:auto',       // let content expand naturally
-        'max-height:none',
-        'overflow:visible',
-        'z-index:-999',
-        'background:#F0F4F0',
-        'padding:18px 20px',
-        'box-sizing:border-box'
-      ].join(';');
+        if (!pdf) {
+          pdf = new jsPDFCls({ orientation:'l', unit:'pt', format:[PAGE_W, PAGE_H] });
+        } else {
+          pdf.addPage([PAGE_W, PAGE_H], 'l');
+        }
 
-      document.body.appendChild(clone);
+        // Header across full width
+        if (hdrCanvas) {
+          pdf.addImage(hdrCanvas.toDataURL('image/png', 1.0), 'PNG',
+            0, 0, PAGE_W, hdrH);
+        }
 
-      // Wait one frame for layout to settle, then measure real height
-      requestAnimationFrame(function() {
-        requestAnimationFrame(function() {
-          var realW = clone.offsetWidth  || 1200;
-          var realH = clone.scrollHeight || clone.offsetHeight;
+        // Card content with margins
+        pdf.addImage(cardCanvas.toDataURL('image/png', 0.94), 'PNG',
+          MARGIN, hdrH + MARGIN, USABLE, cardH);
 
-          var opts = {
-            scale:        2,
-            useCORS:      true,
-            backgroundColor: '#F0F4F0',
-            logging:      false,
-            scrollX:      0,
-            scrollY:      0,
-            windowWidth:  realW,
-            windowHeight: realH + 100,
-            width:        realW,
-            height:       realH
-          };
-
-          html2canvas(clone, opts).then(function(c) {
-            document.body.removeChild(clone);
-            canvases.push(c);
-            ci++;
-            captureNext();
-          }).catch(function(e) {
-            document.body.removeChild(clone);
-            alert('\u622a\u56fe\u5931\u8d25: ' + e.message);
-            setBusy(btn, false);
-          });
-        });
+        pi++;
+        nextPage();
       });
-    }
-
-    function stitch(hdrC) {
-      /* Scale factor: fit A4W */
-      var scaledH = function(c){ return Math.round(c.height * A4W / c.width); };
-      var hdrH    = hdrC ? scaledH(hdrC) : 0;
-      var heights = canvases.map(scaledH);
-      var bodyH   = heights.reduce(function(a,b){ return a + b; }, 0)
-                  + gap * Math.max(0, canvases.length - 1);
-      var pageW   = A4W + margin * 2;
-      var pageH   = hdrH + margin + bodyH + margin;
-
-      if (!pdf) pdf = new jsPDFCls({ orientation:'p', unit:'pt', format:[pageW, pageH] });
-      else       pdf.addPage([pageW, pageH], 'p');
-
-      /* Header spans full page width */
-      if (hdrC) {
-        pdf.addImage(hdrC.toDataURL('image/png', 1.0), 'PNG', 0, 0, pageW, hdrH);
-      }
-
-      var y = hdrH + margin;
-      for (var i = 0; i < canvases.length; i++) {
-        pdf.addImage(
-          canvases[i].toDataURL('image/png', 0.94), 'PNG',
-          margin, y, A4W, heights[i]
-        );
-        y += heights[i] + gap;
-      }
-
-      pi++; nextGroup();
-    }
-
-    captureNext();
+    });
   }
 
-  nextGroup();
+  nextPage();
 }
 
 calc();
