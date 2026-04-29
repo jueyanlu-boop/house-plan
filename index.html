@@ -1643,11 +1643,15 @@ function exportPDF(btn) {
   document.body.appendChild(paramDiv);
 
   /* ── Page groups ── */
+  // Each card = one page so nothing gets cut off
   var groups = [
-    { el: paramDiv, label: '\u8f93\u5165\u53c2\u6570' },
-    { ids: ['card-funds', 'card-schemes'],   label: '\u8d44\u91d1\u6c60 & \u65b9\u6848\u5bf9\u6bd4' },
-    { ids: ['card-detail', 'card-dti'],      label: '\u8d37\u6b3e\u6708\u4f9b & DTI\u5206\u914d' },
-    { ids: ['card-interest', 'card-stress'], label: '\u5229\u606f\u5bf9\u6bd4 & \u538b\u529b\u6d4b\u8bd5' },
+    { el: paramDiv,              label: '\u8f93\u5165\u53c2\u6570' },
+    { id: 'card-funds',          label: '\u53ef\u7528\u8d44\u91d1\u6c60' },
+    { id: 'card-schemes',        label: '\u65b9\u6848\u5bf9\u6bd4\uff0d\u6708\u4f9b\u62c6\u5206' },
+    { id: 'card-detail',         label: '\u8d37\u6b3e & \u6708\u4f9b\u660e\u7ec6' },
+    { id: 'card-dti',            label: 'DTI & \u6536\u5165\u5206\u914d' },
+    { id: 'card-interest',       label: '\u603b\u5229\u606f\u5bf9\u6bd4' },
+    { id: 'card-stress',         label: '\u538b\u529b\u6d4b\u8bd5' },
   ];
 
   var pdf = null, pi = 0, totalPages = groups.length;
@@ -1686,11 +1690,19 @@ function exportPDF(btn) {
     var pg  = groups[pi];
     var A4W = 780, margin = 20, gap = 12;
 
-    var els = pg.el
-      ? [pg.el]
-      : pg.ids
-          .filter(function(id){ return !!document.getElementById(id); })
-          .map(function(id){ return document.getElementById(id); });
+    var els;
+    if (pg.el) {
+      els = [pg.el];
+    } else if (pg.id) {
+      var single = document.getElementById(pg.id);
+      els = single ? [single] : [];
+    } else if (pg.ids) {
+      els = pg.ids
+        .filter(function(id){ return !!document.getElementById(id); })
+        .map(function(id){ return document.getElementById(id); });
+    } else {
+      els = [];
+    }
 
     if (els.length === 0) { pi++; nextGroup(); return; }
 
